@@ -64,19 +64,19 @@ class PaymentController extends Controller
      */
     public function reject(Payment $payment)
     {
-        $msg = 'Payment Status Already Has Been Changed';
+        if ($payment->status !== Status::PENDING) {
+            throw new BadRequestException('Payment Status Already Has Been Changed');
+        }
 
         if ($payment->status == Status::PENDING) {
             $payment->update([
                 'status' => Status::REJECTED
             ]);
 
-            $msg = 'Payment Successfully Rejected';
-
             PaymentRejectEvent::dispatch($payment);
         }
 
-        return Response::message($msg)->data($payment)->send();
+        return Response::message('Payment Successfully Rejected')->data($payment)->send();
     }
 
     /**
