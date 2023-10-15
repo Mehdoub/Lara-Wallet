@@ -10,7 +10,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\CreatePaymentRequest;
 use App\Jobs\SendEmailJob;
 use App\Models\Payment;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 
 class PaymentController extends Controller
 {
@@ -85,18 +87,34 @@ class PaymentController extends Controller
      */
     public function verify(Payment $payment)
     {
-        $msg = 'Payment Status Already Has Been Changed';
-        if ($payment->status == Status::PENDING) {
-            $payment->update([
-                'status' => Status::VERIFIED
-            ]);
-
-            PaymentVerifyEvent::dispatch($payment);
-
-            $msg = 'Payment Successfully Verified';
+        if ($payment->status !== Status::PENDING) {
+            throw new BadRequestException('Payment Status Already Has Been Changed');
         }
 
-        return Response::message($msg)->data($payment)->send();
+        if ($payment->transaction) {
+            throw new BadRequestException('This Payment Already Has a Transaction!');
+        }
+
+        $payment->update([
+            'status' => Status::VERIFIED
+        ]);
+
+        $balance = Transaction::where('user_id', $payment->user_id)
+            ->where('currency', $payment->currency)
+            ->sum('amount');
+        $balance += $payment->amount;
+
+        Transaction::create([
+            'user_id' => $payment->user_id,
+            'payment_id' => $payment->id,
+            'currency' => $payment->currency,
+            'amount' => $payment->amount,
+            'balance' => $balance
+        ]);
+
+        PaymentVerifyEvent::dispatch($payment);
+
+        return Response::message('Payment Successfully Verified')->data($payment)->send();
     }
 
     /**
