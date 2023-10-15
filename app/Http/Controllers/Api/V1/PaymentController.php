@@ -8,11 +8,14 @@ use App\Events\PaymentVerifyEvent;
 use App\Facades\Response;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\CreatePaymentRequest;
+use App\Http\Resources\PaymentCollection;
+use App\Http\Resources\PaymentResource;
 use App\Jobs\SendEmailJob;
 use App\Models\Payment;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PaymentController extends Controller
 {
@@ -23,18 +26,7 @@ class PaymentController extends Controller
     {
         $payments = Payment::query()->paginate();
 
-        return response()->json([
-            'message' => 'Payments Found',
-            'data' => $payments,
-        ], 200);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return Response::message('Payment Found')->data(new PaymentCollection($payments))->send();
     }
 
     /**
@@ -50,10 +42,7 @@ class PaymentController extends Controller
             'unique_id' => uniqid()
         ]);
 
-        return response()->json([
-            'message' => 'Payment Successfully Created',
-            'data' => $newPayment,
-        ], 200);
+        return Response::message('Payment Successfully Created')->data($newPayment)->send();
     }
 
     /**
@@ -118,34 +107,14 @@ class PaymentController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Return Payment with specifice ID.
      */
-    public function show(Payment $payment)
+    public function find(Payment $payment)
     {
-        //
-    }
+        if (!$payment) {
+            throw new NotFoundHttpException('Payment with this ID does not exist');
+        }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Payment $payment)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Payment $payment)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Payment $payment)
-    {
-        //
+        return Response::message('Payment Found')->data(new PaymentResource($payment))->send();
     }
 }
