@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api\V1;
 use App\Enums\Payment\Status;
 use App\Events\PaymentRejectEvent;
 use App\Events\PaymentVerifyEvent;
+use App\Exceptions\BadRequestException;
+use App\Exceptions\NotFoundException;
 use App\Facades\Response;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\CreatePaymentRequest;
@@ -12,8 +14,6 @@ use App\Http\Resources\PaymentCollection;
 use App\Http\Resources\PaymentResource;
 use App\Models\Payment;
 use App\Models\Transaction;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PaymentController extends Controller
 {
@@ -110,7 +110,7 @@ class PaymentController extends Controller
     public function find(Payment $payment)
     {
         if (!$payment) {
-            throw new NotFoundHttpException('Payment with this ID does not exist');
+            throw new NotFoundException('Payment with this ID does not exist');
         }
 
         return Response::message('Payment Found')->data(new PaymentResource($payment))->send();

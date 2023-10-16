@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use App\Facades\Response;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 
@@ -18,6 +19,13 @@ class Handler extends ExceptionHandler
         'password_confirmation',
     ];
 
+    private $customExceptions = [
+        AuthFailedException::class,
+        BadRequestException::class,
+        ForbiddenAccessException::class,
+        NotFoundException::class,
+    ];
+
     /**
      * Register the exception handling callbacks for the application.
      */
@@ -26,5 +34,15 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    public function render($request, Throwable $e)
+    {
+        if (in_array(get_class($e), $this->customExceptions)) {
+            return $e->render();
+        } else {
+            $statusCode = method_exists($e, 'getStatusCode') ? $e->getStatusCode() : 500;
+            return Response::message($e->getMessage())->status($statusCode)->send();
+        }
     }
 }
