@@ -6,7 +6,6 @@ use App\Enums\Payment\Status;
 use App\Events\PaymentRejectEvent;
 use App\Events\PaymentVerifyEvent;
 use App\Exceptions\BadRequestException;
-use App\Exceptions\NotFoundException;
 use App\Facades\Response;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\CreatePaymentRequest;
@@ -24,7 +23,7 @@ class PaymentController extends Controller
     {
         $payments = Payment::query()->paginate();
 
-        return Response::message('Payment Found')->data(new PaymentCollection($payments))->send();
+        return Response::message(__('payment.messages.payment_list_found_successfully'))->data(new PaymentCollection($payments))->send();
     }
 
     /**
@@ -40,7 +39,7 @@ class PaymentController extends Controller
             'unique_id' => uniqid()
         ]);
 
-        return Response::message('Payment Successfully Created')->data($newPayment)->send();
+        return Response::message(__('payment.messages.payment_successfuly_created'))->data($newPayment)->send();
     }
 
     /**
@@ -52,7 +51,7 @@ class PaymentController extends Controller
     public function reject(Payment $payment)
     {
         if ($payment->status !== Status::PENDING) {
-            throw new BadRequestException('Payment Status Already Has Been Changed');
+            throw new BadRequestException(__('payment.errors.you_can_only_decline_pending_payments'));
         }
 
         if ($payment->status == Status::PENDING) {
@@ -63,7 +62,7 @@ class PaymentController extends Controller
             PaymentRejectEvent::dispatch($payment);
         }
 
-        return Response::message('Payment Successfully Rejected')->data($payment)->send();
+        return Response::message(__('payment.messages.the_payment_was_successfully_rejected'))->data($payment)->send();
     }
 
     /**
@@ -109,10 +108,8 @@ class PaymentController extends Controller
      */
     public function find(Payment $payment)
     {
-        if (!$payment) {
-            throw new NotFoundException('Payment with this ID does not exist');
-        }
-
-        return Response::message('Payment Found')->data(new PaymentResource($payment))->send();
+        return Response::message(__('payment.messages.payment_successfuly_found'))
+            ->data(new PaymentResource($payment))
+            ->send();
     }
 }

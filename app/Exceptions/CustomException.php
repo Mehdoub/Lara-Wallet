@@ -18,14 +18,9 @@ abstract class CustomException extends Exception
 
     abstract public function errors(): array;
 
-    private function getErrorMessage(): string
-    {
-        return __('exceptions.' . $this->message());
-    }
-
     public function render()
     {
-        return Response::message($this->getErrorMessage())
+        return Response::message($this->message())
             ->status($this->status())
             ->errors($this->errors())
             ->send();
