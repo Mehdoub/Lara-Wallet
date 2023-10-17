@@ -6,7 +6,7 @@ use Illuminate\Http\Response;
 
 class NotFoundException extends CustomException
 {
-    protected $message = 'not_found';
+    protected $message = 'Not Found';
     protected $errors = [];
 
     public function __construct(string $message = '', array $errors = [])

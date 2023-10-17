@@ -6,7 +6,7 @@ use Illuminate\Http\Response;
 
 class AuthFailedException extends CustomException
 {
-    protected $message = 'auth_err';
+    protected $message = 'Authentication Error';
     protected $errors = [];
 
     public function __construct(string $message = '', array $errors = [])

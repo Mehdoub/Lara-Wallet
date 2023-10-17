@@ -6,7 +6,7 @@ use Illuminate\Http\Response;
 
 class ForbiddenAccessException extends CustomException
 {
-    protected $message = 'forbidden_access';
+    protected $message = 'Forbidden Access';
     protected $errors = [];
 
     public function __construct(string $message = '', array $errors = [])

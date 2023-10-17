@@ -6,7 +6,7 @@ use Illuminate\Http\Response;
 
 class BadRequestException extends CustomException
 {
-    protected $message = 'bad_request';
+    protected $message = 'Bad Request';
     protected $errors = [];
 
     public function __construct(string $message = '', array $errors = [])
