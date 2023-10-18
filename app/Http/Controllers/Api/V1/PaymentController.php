@@ -13,6 +13,7 @@ use App\Http\Resources\PaymentCollection;
 use App\Http\Resources\PaymentResource;
 use App\Models\Payment;
 use App\Models\Transaction;
+use Carbon\Carbon;
 
 class PaymentController extends Controller
 {
@@ -82,13 +83,25 @@ class PaymentController extends Controller
         }
 
         $payment->update([
-            'status' => Status::VERIFIED
+            'status' => Status::VERIFIED,
+            'status_updated_at' => Carbon::now(),
+            'status_updated_by' => 1,
         ]);
 
         $balance = Transaction::where('user_id', $payment->user_id)
             ->where('currency', $payment->currency)
             ->sum('amount');
         $balance += $payment->amount;
+
+        $userBalance = json_decode($payment->user->balance);
+        if ($userBalance) $userBalance->{$payment->currency} = $balance;
+        else $userBalance[$payment->currency] = $balance;
+
+        // dd($userBalance);
+
+        $payment->user()->update([
+            'balance' => json_encode($userBalance)
+        ]);
 
         Transaction::create([
             'user_id' => $payment->user_id,
