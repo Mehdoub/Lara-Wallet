@@ -4,6 +4,27 @@ namespace App\Http\Swaggers\Api\V1;
 
 class CurrencyControllerDoc
 {
+/**
+     * @OA\Get(
+     *     path="/api/v1/currencies",
+     *     operationId="CurrencyIndex",
+     *     tags={"CURRENCY"},
+     *
+     *     summary="Currency List",
+     *
+     *      @OA\Response(response=200, description="Successful operation"),
+     *      @OA\Response(response=201, description="Successful operation"),
+     *      @OA\Response(response=202, description="Successful operation"),
+     *      @OA\Response(response=204, description="Successful operation"),
+     *      @OA\Response(response=400, description="Bad Request"),
+     *      @OA\Response(response=401, description="Unauthenticated"),
+     *      @OA\Response(response=403, description="Forbidden"),
+     *      @OA\Response(response=404, description="Resource Not Found")
+     * )
+     */
+    public function index()
+    {
+    }
 
     /**
      * @OA\Post(

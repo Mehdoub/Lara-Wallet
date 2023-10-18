@@ -7,6 +7,39 @@
     },
     "paths": {
         "/api/v1/currencies": {
+            "get": {
+                "tags": [
+                    "CURRENCY"
+                ],
+                "summary": "Currency List",
+                "operationId": "CurrencyIndex",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "201": {
+                        "description": "Successful operation"
+                    },
+                    "202": {
+                        "description": "Successful operation"
+                    },
+                    "204": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                }
+            },
             "post": {
                 "tags": [
                     "CURRENCY"
