@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\CurrencyController;
 use App\Http\Controllers\Api\V1\PaymentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -25,6 +26,11 @@ Route::prefix('v1')->group(function () {
     Route::patch('payments/{payment}/verify', [PaymentController::class, 'verify']);
     Route::get('payments', [PaymentController::class, 'index']);
     Route::get('payments/{payment}', [PaymentController::class, 'find']);
+
+    Route::get('currencies', [CurrencyController::class, 'index']);
+    Route::post('currencies', [CurrencyController::class, 'store']);
+    Route::patch('currencies/{currency}/activate', [CurrencyController::class, 'activate']);
+    Route::patch('currencies/{currency}/deactivate', [CurrencyController::class, 'deactivate']);
 });
 
 

@@ -2,18 +2,22 @@
 
 namespace App\Http\Swaggers\Api\V1;
 
-use Illuminate\Http\Request;
-
-class PaymentControllerDoc
+class CurrencyControllerDoc
 {
 
     /**
-     * @OA\Get(
-     *     path="/api/v1/payments",
-     *     operationId="PaymentIndex",
-     *     tags={"PAYMENT"},
+     * @OA\Post(
+     *     path="/api/v1/currencies",
+     *     operationId="CurrencyStore",
+     *     tags={"CURRENCY"},
      *
-     *     summary="Payment List",
+     *     summary="Currency Create",
+     *
+     *      @OA\RequestBody(
+     *         @OA\JsonContent(),
+     *         @OA\Schema(type="object", required={"name"}),
+     *         @OA\Property(property="name", type="text"),
+     *     ),
      *
      *      @OA\Response(response=200, description="Successful operation"),
      *      @OA\Response(response=201, description="Successful operation"),
@@ -25,17 +29,26 @@ class PaymentControllerDoc
      *      @OA\Response(response=404, description="Resource Not Found")
      * )
      */
-    public function index(Request $request)
+    public function store()
     {
     }
 
     /**
      * @OA\Patch(
-     *     path="/api/v1/reject",
-     *     operationId="PaymentReject",
-     *     tags={"PAYMENT"},
+     *     path="/api/v1/currencies/{currency_id}/activate",
+     *     operationId="CurrencyActivate",
+     *     tags={"CURRENCY"},
      *
-     *     summary="Payment Reject",
+     *     summary="Currency Activate",
+     *
+     *      @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="currency id",
+     *         required=true,
+     *         example="1",
+     *         @OA\Schema(type="integer")
+     *     ),
      *
      *      @OA\Response(response=200, description="Successful operation"),
      *      @OA\Response(response=201, description="Successful operation"),
@@ -47,17 +60,26 @@ class PaymentControllerDoc
      *      @OA\Response(response=404, description="Resource Not Found")
      * )
      */
-    public function reject()
+    public function activate()
     {
     }
 
     /**
      * @OA\Patch(
-     *     path="/api/v1/verify",
-     *     operationId="PaymentVerify",
-     *     tags={"PAYMENT"},
+     *     path="/api/v1/currencies/{currency_id}/deactivate",
+     *     operationId="CurrencyDeactivate",
+     *     tags={"CURRENCY"},
      *
-     *     summary="Payment Verify",
+     *     summary="Currency Deactivate",
+     *
+     *      @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="currency id",
+     *         required=true,
+     *         example="1",
+     *         @OA\Schema(type="integer")
+     *     ),
      *
      *      @OA\Response(response=200, description="Successful operation"),
      *      @OA\Response(response=201, description="Successful operation"),
@@ -69,8 +91,7 @@ class PaymentControllerDoc
      *      @OA\Response(response=404, description="Resource Not Found")
      * )
      */
-    public function verify()
+    public function deactivate()
     {
     }
 }
-?>

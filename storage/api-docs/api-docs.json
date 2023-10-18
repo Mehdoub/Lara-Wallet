@@ -6,6 +6,142 @@
         "version": "1.0.0"
     },
     "paths": {
+        "/api/v1/currencies": {
+            "post": {
+                "tags": [
+                    "CURRENCY"
+                ],
+                "summary": "Currency Create",
+                "operationId": "CurrencyStore",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {}
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "201": {
+                        "description": "Successful operation"
+                    },
+                    "202": {
+                        "description": "Successful operation"
+                    },
+                    "204": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                }
+            }
+        },
+        "/api/v1/currencies/{currency_id}/activate": {
+            "patch": {
+                "tags": [
+                    "CURRENCY"
+                ],
+                "summary": "Currency Activate",
+                "operationId": "CurrencyActivate",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "currency id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": "1"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "201": {
+                        "description": "Successful operation"
+                    },
+                    "202": {
+                        "description": "Successful operation"
+                    },
+                    "204": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                }
+            }
+        },
+        "/api/v1/currencies/{currency_id}/deactivate": {
+            "patch": {
+                "tags": [
+                    "CURRENCY"
+                ],
+                "summary": "Currency Deactivate",
+                "operationId": "CurrencyDeactivate",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "currency id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": "1"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "201": {
+                        "description": "Successful operation"
+                    },
+                    "202": {
+                        "description": "Successful operation"
+                    },
+                    "204": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                }
+            }
+        },
         "/api/v1/payments": {
             "get": {
                 "tags": [
@@ -41,13 +177,13 @@
                 }
             }
         },
-        "/api/v1/payments2": {
-            "get": {
+        "/api/v1/reject": {
+            "patch": {
                 "tags": [
                     "PAYMENT"
                 ],
-                "summary": "Payment List 2",
-                "operationId": "PaymentIndex2",
+                "summary": "Payment Reject",
+                "operationId": "PaymentReject",
                 "responses": {
                     "200": {
                         "description": "Successful operation"
@@ -76,13 +212,13 @@
                 }
             }
         },
-        "/api/v1/payments3": {
-            "get": {
+        "/api/v1/verify": {
+            "patch": {
                 "tags": [
                     "PAYMENT"
                 ],
-                "summary": "Payment List 3",
-                "operationId": "PaymentIndex3",
+                "summary": "Payment Verify",
+                "operationId": "PaymentVerify",
                 "responses": {
                     "200": {
                         "description": "Successful operation"
