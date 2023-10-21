@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Enums\TransferPayment\Status;
+use App\Events\UpdateTransactionEvent;
 use App\Exceptions\BadRequestException;
 use App\Facades\Response;
 use App\Http\Controllers\Controller;
@@ -22,12 +23,12 @@ class TransferPaymentController extends Controller
             'currency_id' => $request->currency_id,
         ]);
 
-        $fromUserBalance = (array) json_decode($newTransferPayment->fromUser->balance);
+        DB::beginTransaction();
 
+        $fromUserBalance = Transaction::calcBalance($newTransferPayment->from_user_id, $newTransferPayment->currency_id);
         if (
             !$fromUserBalance
-            or !isset($fromUserBalance[$newTransferPayment->currency_id])
-            or $fromUserBalance[$newTransferPayment->currency_id] < $newTransferPayment->amount
+            or $fromUserBalance < $newTransferPayment->amount
         ) {
             $newTransferPayment->update([
                 'status' => Status::FAILED,
@@ -35,51 +36,26 @@ class TransferPaymentController extends Controller
             throw new BadRequestException(__('payment.errors.not_enough_balance'));
         }
 
-        DB::beginTransaction();
-
-        $newTransferPayment->fromUser()->lockForUpdate();
-        $newTransferPayment->toUser()->lockForUpdate();
-
-        $fromUserUpdatedBalance = Transaction::where('user_id', $newTransferPayment->from_user_id)
-            ->where('currency_id', $newTransferPayment->currency_id)
-            ->sum('amount');
-        $fromUserUpdatedBalance += $newTransferPayment->amount * -1;
-
-        Transaction::create([
+        $fromUserBalance += $newTransferPayment->amount * -1;
+        $withdrawTransaction = Transaction::create([
             'user_id' => $newTransferPayment->from_user_id,
             'transfer_payment_id' => $newTransferPayment->id,
             'currency_id' => $newTransferPayment->currency_id,
             'amount' => $newTransferPayment->amount * -1,
-            'balance' => $fromUserUpdatedBalance,
+            'balance' => $fromUserBalance,
         ]);
+        UpdateTransactionEvent::dispatch($withdrawTransaction);
 
-        $fromUserBalance[$newTransferPayment->currency_id] = $fromUserUpdatedBalance;
-
-        $newTransferPayment->fromUser()->update([
-            'balance' => json_encode($fromUserBalance)
-        ]);
-
-        $toUserUpdatedBalance = Transaction::where('user_id', $newTransferPayment->to_user_id)
-            ->where('currency_id', $newTransferPayment->currency_id)
-            ->sum('amount');
-        $toUserUpdatedBalance += $newTransferPayment->amount;
-
-        $toUserBalance = (array) json_decode($newTransferPayment->toUser->balance);
-        if ($toUserBalance) $toUserBalance[$newTransferPayment->currency_id] = $toUserUpdatedBalance;
-        else $toUserBalance[$newTransferPayment->currency_id] = $toUserUpdatedBalance;
-
-        Transaction::create([
+        $toUserBalance = Transaction::calcBalance($newTransferPayment->to_user_id, $newTransferPayment->currency_id);
+        $toUserBalance += $newTransferPayment->amount;
+        $depositTransaction = Transaction::create([
             'user_id' => $newTransferPayment->to_user_id,
             'transfer_payment_id' => $newTransferPayment->id,
             'currency_id' => $newTransferPayment->currency_id,
             'amount' => $newTransferPayment->amount,
-            'balance' => $toUserUpdatedBalance,
-            'is_transferpayment' => true,
+            'balance' => $toUserBalance,
         ]);
-
-        $newTransferPayment->toUser()->update([
-            'balance' => json_encode($toUserBalance)
-        ]);
+        UpdateTransactionEvent::dispatch($depositTransaction);
 
         $newTransferPayment->update([
             'status' => Status::TRANSFERRED,

@@ -23,6 +23,12 @@ class PaymentController extends Controller
      */
     public function index()
     {
+        Payment::query()->chunk(5, function($pays) {
+            foreach($pays as $pay) {
+                var_dump($pay);
+            }
+        });
+
         $payments = Payment::query()->paginate();
 
         return Response::message(__('payment.messages.payment_list_found_successfully'))->data(new PaymentCollection($payments))->send();

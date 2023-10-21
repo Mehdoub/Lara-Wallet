@@ -23,4 +23,11 @@ class Transaction extends Model
     {
         return $this->belongsTo(Payment::class, 'payment_id');
     }
+
+    public static function calcBalance($userId, $currencyId)
+    {
+        return Transaction::where('user_id', $userId)
+            ->where('currency_id', $currencyId)
+            ->sum('amount');
+    }
 }
