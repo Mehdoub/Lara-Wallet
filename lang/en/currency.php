@@ -12,5 +12,7 @@ return [
     "errors" => [
         'already_activated' => 'Currency Already Has Been Activated',
         'already_deactivated' => 'Currency Already Has Been Deactivated',
+        "currency_notfound" => "There Is No Currency With This ID",
+        "currency_is_not_active" => "This Currency Is Not Active",
     ],
 ];

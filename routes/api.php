@@ -22,15 +22,15 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
     Route::post('payments', [PaymentController::class, 'store']);
-    Route::patch('payments/{payment}/reject', [PaymentController::class, 'reject']);
-    Route::patch('payments/{payment}/verify', [PaymentController::class, 'verify']);
+    Route::patch('payments/{id}/reject', [PaymentController::class, 'reject']);
+    Route::patch('payments/{id}/verify', [PaymentController::class, 'verify']);
     Route::get('payments', [PaymentController::class, 'index']);
-    Route::get('payments/{payment}', [PaymentController::class, 'find']);
+    Route::get('payments/{id}', [PaymentController::class, 'find']);
 
     Route::get('currencies', [CurrencyController::class, 'index']);
     Route::post('currencies', [CurrencyController::class, 'store']);
-    Route::patch('currencies/{currency}/activate', [CurrencyController::class, 'activate']);
-    Route::patch('currencies/{currency}/deactivate', [CurrencyController::class, 'deactivate']);
+    Route::patch('currencies/{id}/activate', [CurrencyController::class, 'activate']);
+    Route::patch('currencies/{id}/deactivate', [CurrencyController::class, 'deactivate']);
 });
 
 

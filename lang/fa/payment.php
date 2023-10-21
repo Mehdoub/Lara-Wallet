@@ -10,6 +10,7 @@ return [
     ],
     "validations" => [],
     "errors" => [
-        "you_can_only_decline_pending_payments" => "شما فقط امکان رد پرداخت های در انتظار را دارید"
+        "you_can_only_decline_pending_payments" => "شما فقط امکان رد پرداخت های در انتظار را دارید",
+        "payment_notfound" => "پرداخت یافت نشد",
     ],
 ];

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Exceptions\BadRequestException;
+use App\Exceptions\NotFoundException;
 use App\Facades\Response;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\CurrencyStoreRequest;
@@ -33,8 +34,14 @@ class CurrencyController extends Controller
             ->send();
     }
 
-    public function activate(Currency $currency)
+    public function activate($id)
     {
+        $currency = Currency::find($id);
+
+        if (!$currency) {
+            throw new NotFoundException(__('currency.errors.currency_notfound'));
+        }
+
         if ($currency->is_active) {
             throw new BadRequestException(__('currency.errors.already_activated'));
         }
@@ -44,8 +51,14 @@ class CurrencyController extends Controller
         return Response::message(__('currency.messages.successfully_avtivated'))->send();
     }
 
-    public function deactivate(Currency $currency)
+    public function deactivate($id)
     {
+        $currency = Currency::find($id);
+
+        if (!$currency) {
+            throw new NotFoundException(__('currency.errors.currency_notfound'));
+        }
+
         if (!$currency->is_active) {
             throw new BadRequestException(__('currency.errors.already_deactivated'));
         }

@@ -10,6 +10,7 @@ return [
     ],
     "validations" => [],
     "errors" => [
-        "you_can_only_decline_pending_payments" => "You can only decline pending payments"
+        "you_can_only_decline_pending_payments" => "You can only decline pending payments",
+        "payment_notfound" => "Payment Not Found",
     ],
 ];

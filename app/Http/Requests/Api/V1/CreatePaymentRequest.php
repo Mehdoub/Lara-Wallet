@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Api\V1;
 
 use App\Enums\Payment\Currency;
+use App\Rules\PaymentCustomRules;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
 
@@ -25,9 +26,16 @@ class CreatePaymentRequest extends FormRequest
     {
         $validations = [
             'amount' => ['required', 'numeric'],
-            'currency' => ['required', 'string'],
+            'currency_id' => ['required', 'numeric', 'exists:currencies,id', new PaymentCustomRules],
         ];
 
         return $validations;
+    }
+
+    public function messages()
+    {
+        return [
+            'currency_id.exists' => __('currency.errors.currency_notfound')
+        ];
     }
 }

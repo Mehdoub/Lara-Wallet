@@ -6,6 +6,7 @@ use App\Enums\Payment\Status;
 use App\Events\PaymentRejectEvent;
 use App\Events\PaymentVerifyEvent;
 use App\Exceptions\BadRequestException;
+use App\Exceptions\NotFoundException;
 use App\Facades\Response;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\CreatePaymentRequest;
@@ -35,7 +36,7 @@ class PaymentController extends Controller
         $newPayment = Payment::create([
             'user_id' => 1,
             'amount' => $request->amount,
-            'currency' => $request->currency,
+            'currency_id' => $request->currency_id,
             'type' => $request->type,
             'unique_id' => uniqid()
         ]);
@@ -49,8 +50,14 @@ class PaymentController extends Controller
      * @param  Payment $payment
      * @return void
      */
-    public function reject(Payment $payment)
+    public function reject($id)
     {
+        $payment = Payment::find($id);
+
+        if (!$payment) {
+            throw new NotFoundException(__('payment.errors.payment_notfound'));
+        }
+
         if ($payment->status !== Status::PENDING) {
             throw new BadRequestException(__('payment.errors.you_can_only_decline_pending_payments'));
         }
@@ -72,14 +79,24 @@ class PaymentController extends Controller
      * @param  Payment $payment
      * @return void
      */
-    public function verify(Payment $payment)
+    public function verify($id)
     {
+        $payment = Payment::find($id);
+
+        if (!$payment) {
+            throw new NotFoundException(__('payment.errors.payment_notfound'));
+        }
+
         if ($payment->status !== Status::PENDING) {
             throw new BadRequestException('Payment Status Already Has Been Changed');
         }
 
         if ($payment->transaction) {
             throw new BadRequestException('This Payment Already Has a Transaction!');
+        }
+
+        if (!$payment->currency->is_active) {
+            throw new BadRequestException(__('currency.errors.currency_is_not_active'));
         }
 
         $payment->update([
@@ -89,13 +106,13 @@ class PaymentController extends Controller
         ]);
 
         $balance = Transaction::where('user_id', $payment->user_id)
-            ->where('currency', $payment->currency)
+            ->where('currency_id', $payment->currency_id)
             ->sum('amount');
         $balance += $payment->amount;
 
         $userBalance = json_decode($payment->user->balance);
-        if ($userBalance) $userBalance->{$payment->currency} = $balance;
-        else $userBalance[$payment->currency] = $balance;
+        if ($userBalance) $userBalance->{$payment->currency_id} = $balance;
+        else $userBalance[$payment->currency_id] = $balance;
 
         // dd($userBalance);
 
@@ -106,7 +123,7 @@ class PaymentController extends Controller
         Transaction::create([
             'user_id' => $payment->user_id,
             'payment_id' => $payment->id,
-            'currency' => $payment->currency,
+            'currency_id' => $payment->currency_id,
             'amount' => $payment->amount,
             'balance' => $balance
         ]);
@@ -119,8 +136,14 @@ class PaymentController extends Controller
     /**
      * Return Payment with specifice ID.
      */
-    public function find(Payment $payment)
+    public function find($id)
     {
+        $payment = Payment::find($id);
+
+        if (!$payment) {
+            throw new NotFoundException(__('payment.errors.payment_notfound'));
+        }
+
         return Response::message(__('payment.messages.payment_successfuly_found'))
             ->data(new PaymentResource($payment))
             ->send();
