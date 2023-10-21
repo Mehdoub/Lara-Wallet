@@ -6,7 +6,7 @@ use App\Models\Currency;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 
-class PaymentCustomRules implements ValidationRule
+class CurrencyCustomRules implements ValidationRule
 {
     /**
      * Run the validation rule.

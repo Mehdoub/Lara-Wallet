@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\CurrencyController;
 use App\Http\Controllers\Api\V1\PaymentController;
+use App\Http\Controllers\Api\V1\TransferPaymentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -31,6 +32,8 @@ Route::prefix('v1')->group(function () {
     Route::post('currencies', [CurrencyController::class, 'store']);
     Route::patch('currencies/{id}/activate', [CurrencyController::class, 'activate']);
     Route::patch('currencies/{id}/deactivate', [CurrencyController::class, 'deactivate']);
+
+    Route::post('transfer-payment', [TransferPaymentController::class, 'store']);
 });
 
 

@@ -2,12 +2,10 @@
 
 namespace App\Http\Requests\Api\V1;
 
-use App\Enums\Payment\Currency;
 use App\Rules\CurrencyCustomRules;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\Enum;
 
-class CreatePaymentRequest extends FormRequest
+class StoreTransferPaymentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,18 +22,19 @@ class CreatePaymentRequest extends FormRequest
      */
     public function rules(): array
     {
-        $validations = [
+        return [
             'amount' => ['required', 'numeric', 'min:0', 'not_in:0'],
             'currency_id' => ['required', 'numeric', 'exists:currencies,id', new CurrencyCustomRules],
+            'from_user_id' => ['required', 'numeric', 'exists:users,id'],
+            'to_user_id' => ['required', 'numeric', 'exists:users,id'],
         ];
-
-        return $validations;
     }
 
     public function messages()
     {
         return [
-            'currency_id.exists' => __('currency.errors.currency_notfound')
+            'from_user_id.exists' => __('payment.errors.from_user_notfound'),
+            'to_user_id.exists' => __('payment.errors.to_user_notfound'),
         ];
     }
 }
