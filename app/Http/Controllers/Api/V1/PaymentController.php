@@ -23,12 +23,6 @@ class PaymentController extends Controller
      */
     public function index()
     {
-        Payment::query()->chunk(5, function($pays) {
-            foreach($pays as $pay) {
-                var_dump($pay);
-            }
-        });
-
         $payments = Payment::query()->paginate();
 
         return Response::message(__('payment.messages.payment_list_found_successfully'))->data(new PaymentCollection($payments))->send();
@@ -40,7 +34,7 @@ class PaymentController extends Controller
     public function store(CreatePaymentRequest $request)
     {
         $newPayment = Payment::create([
-            'user_id' => 1,
+            'user_id' => auth()->user()->id,
             'amount' => $request->amount,
             'currency_id' => $request->currency_id,
             'type' => $request->type,
@@ -70,7 +64,9 @@ class PaymentController extends Controller
 
         if ($payment->status == Status::PENDING) {
             $payment->update([
-                'status' => Status::REJECTED
+                'status' => Status::REJECTED,
+                'status_updated_at' => Carbon::now(),
+                'status_updated_by' => auth()->user()->id,
             ]);
 
             PaymentRejectEvent::dispatch($payment);
@@ -108,7 +104,7 @@ class PaymentController extends Controller
         $payment->update([
             'status' => Status::VERIFIED,
             'status_updated_at' => Carbon::now(),
-            'status_updated_by' => 1,
+            'status_updated_by' => auth()->user()->id,
         ]);
 
         $balance = Transaction::where('user_id', $payment->user_id)
@@ -119,8 +115,6 @@ class PaymentController extends Controller
         $userBalance = json_decode($payment->user->balance);
         if ($userBalance) $userBalance->{$payment->currency_id} = $balance;
         else $userBalance[$payment->currency_id] = $balance;
-
-        // dd($userBalance);
 
         $payment->user()->update([
             'balance' => json_encode($userBalance)

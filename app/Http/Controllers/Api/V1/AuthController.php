@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
 use App\Exceptions\UnauthorizedException;
 use App\Facades\Response;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\RegisterRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;

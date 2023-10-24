@@ -3,8 +3,7 @@
 use App\Http\Controllers\Api\V1\CurrencyController;
 use App\Http\Controllers\Api\V1\PaymentController;
 use App\Http\Controllers\Api\V1\TransferPaymentController;
-use App\Http\Controllers\AuthController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\V1\AuthController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,11 +17,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
-
-Route::prefix('v1')->group(function () {
+Route::group([
+    'middleware' => ['api', 'auth'],
+    'prefix' => 'v1'
+], function () {
     Route::post('payments', [PaymentController::class, 'store']);
     Route::patch('payments/{id}/reject', [PaymentController::class, 'reject']);
     Route::patch('payments/{id}/verify', [PaymentController::class, 'verify']);
@@ -35,15 +33,15 @@ Route::prefix('v1')->group(function () {
     Route::patch('currencies/{id}/deactivate', [CurrencyController::class, 'deactivate']);
 
     Route::post('transfer-payment', [TransferPaymentController::class, 'store']);
+});
 
-    Route::group([
-        'prefix' => 'auth',
-        'middleware' => 'api',
-    ], function () {
-        Route::post('login', [AuthController::class, 'login']);
-        Route::post('register', [AuthController::class, 'register']);
-        Route::post('logout', [AuthController::class, 'logout']);
-        Route::post('getme', [AuthController::class, 'getme']);
-        Route::post('refresh', [AuthController::class, 'refresh']);
-    });
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'v1/auth',
+], function () {
+    Route::post('login', [AuthController::class, 'login']);
+    Route::post('register', [AuthController::class, 'register']);
+    Route::post('logout', [AuthController::class, 'logout']);
+    Route::post('getme', [AuthController::class, 'getme']);
+    Route::post('refresh', [AuthController::class, 'refresh']);
 });
