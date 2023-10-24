@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\CurrencyController;
 use App\Http\Controllers\Api\V1\PaymentController;
 use App\Http\Controllers\Api\V1\TransferPaymentController;
+use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -34,6 +35,15 @@ Route::prefix('v1')->group(function () {
     Route::patch('currencies/{id}/deactivate', [CurrencyController::class, 'deactivate']);
 
     Route::post('transfer-payment', [TransferPaymentController::class, 'store']);
+
+    Route::group([
+        'prefix' => 'auth',
+        'middleware' => 'api',
+    ], function () {
+        Route::post('login', [AuthController::class, 'login']);
+        Route::post('register', [AuthController::class, 'register']);
+        Route::post('logout', [AuthController::class, 'logout']);
+        Route::post('getme', [AuthController::class, 'getme']);
+        Route::post('refresh', [AuthController::class, 'refresh']);
+    });
 });
-
-
