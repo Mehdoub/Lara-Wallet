@@ -20,7 +20,7 @@ return new class extends Migration
             $table->double('amount');
             $table->timestamp('status_updated_at')->nullable();
             $table->foreignId('status_updated_by')->nullable()->constrained('users')->onDelete('set null');
-            $table->string('unique_id', 10)->unique();
+            $table->string('unique_id', 20)->unique();
             $table->timestamps();
         });
     }
@@ -30,6 +30,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('payments');
+        Schema::enableForeignKeyConstraints();
     }
 };

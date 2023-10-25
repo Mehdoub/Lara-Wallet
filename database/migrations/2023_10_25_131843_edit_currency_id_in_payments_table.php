@@ -12,8 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('payments', function (Blueprint $table) {
-            $table->dropColumn('currency');
-            $table->foreignId('currency_id')->constrained('currencies');
+            $table->string('currency_key')->unique();
+            $table->foreign('currency_key')
+                ->references('key')
+                ->on('currencies')
+                ->onUpdate('cascade');
         });
     }
 
@@ -22,9 +25,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::table('payments', function (Blueprint $table) {
-            $table->dropColumn('currency_id');
-            $table->string('currency');
+            $table->dropColumn('currency_key');
         });
+        Schema::enableForeignKeyConstraints();
     }
 };

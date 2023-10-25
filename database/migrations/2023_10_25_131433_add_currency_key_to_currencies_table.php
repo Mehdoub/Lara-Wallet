@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('payments', function(Blueprint $table) {
-            $table->string('unique_id', 20)->change();
+        Schema::table('currencies', function (Blueprint $table) {
+            $table->string('key')->unique();
         });
     }
 
@@ -21,8 +21,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('payments', function(Blueprint $table) {
-            $table->string('unique_id', 10)->change();
+        Schema::disableForeignKeyConstraints();
+        Schema::table('currencies', function (Blueprint $table) {
+            $table->dropColumn('key');
         });
+        Schema::enableForeignKeyConstraints();
     }
 };
