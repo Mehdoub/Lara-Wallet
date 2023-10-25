@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Enums\Payment\Status;
 use App\Events\PaymentRejectEvent;
 use App\Events\PaymentVerifyEvent;
+use App\Events\UpdateTransactionEvent;
 use App\Exceptions\BadRequestException;
 use App\Exceptions\NotFoundException;
 use App\Facades\Response;
@@ -33,6 +34,17 @@ class PaymentController extends Controller
      */
     public function store(CreatePaymentRequest $request)
     {
+        $recentDuplicatePaymentExists = Payment::query()->where([
+            ['amount', $request->amount],
+            ['currency_id', $request->currency_id],
+            ['created_at', '>', Carbon::now()->subMinutes(5)]
+        ])->first();
+
+        if ($recentDuplicatePaymentExists) throw new BadRequestException(__('payment.messages.duplicate_payment_exists', [
+            'amount' => $recentDuplicatePaymentExists->amount,
+            'currency' => $recentDuplicatePaymentExists->currency->name,
+        ]));
+
         $newPayment = Payment::create([
             'user_id' => auth()->user()->id,
             'amount' => $request->amount,
@@ -107,26 +119,18 @@ class PaymentController extends Controller
             'status_updated_by' => auth()->user()->id,
         ]);
 
-        $balance = Transaction::where('user_id', $payment->user_id)
-            ->where('currency_id', $payment->currency_id)
-            ->sum('amount');
+        $balance = Transaction::calcBalance($payment->user_id, $payment->currency_id);
         $balance += $payment->amount;
 
-        $userBalance = json_decode($payment->user->balance);
-        if ($userBalance) $userBalance->{$payment->currency_id} = $balance;
-        else $userBalance[$payment->currency_id] = $balance;
-
-        $payment->user()->update([
-            'balance' => json_encode($userBalance)
-        ]);
-
-        Transaction::create([
+        $transaction = Transaction::create([
             'user_id' => $payment->user_id,
             'payment_id' => $payment->id,
             'currency_id' => $payment->currency_id,
             'amount' => $payment->amount,
             'balance' => $balance
         ]);
+
+        UpdateTransactionEvent::dispatch($transaction);
 
         PaymentVerifyEvent::dispatch($payment);
 

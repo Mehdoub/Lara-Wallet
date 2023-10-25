@@ -7,7 +7,8 @@ return [
         "payment_successfuly_created" => "Payment successfuly created",
         "payment_successfuly_found" => "Payment successfuly found",
         "the_payment_was_successfully_rejected" => "The payment was successfully rejected",
-        "balance_transferred" => "Balance Successfully Transferred"
+        "balance_transferred" => "Balance Successfully Transferred",
+        "duplicate_payment_exists" => "A Similar Payment (:amount :currency) Has Done In Recent 5 Minutes"
     ],
     "validations" => [],
     "errors" => [
