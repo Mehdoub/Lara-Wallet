@@ -2,7 +2,7 @@
 
 namespace App\Listeners;
 
-use App\Events\PaymentVerifyEvent;
+use App\Events\PaymentVerified;
 use App\Jobs\SendPaymentVerifiedEmailJob;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -20,7 +20,7 @@ class SendPaymentVerifiedEmailListener
     /**
      * Handle the event.
      */
-    public function handle(PaymentVerifyEvent $event): void
+    public function handle(PaymentVerified $event): void
     {
         SendPaymentVerifiedEmailJob::dispatch($event->payment->user, 'Payment ' . $event->payment->id . ' Verified');
     }

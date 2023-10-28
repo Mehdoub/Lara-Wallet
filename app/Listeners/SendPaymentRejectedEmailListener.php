@@ -2,7 +2,7 @@
 
 namespace App\Listeners;
 
-use App\Events\PaymentRejectEvent;
+use App\Events\PaymentRejected;
 use App\Jobs\SendPaymentRejectedEmailJob;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -20,7 +20,7 @@ class SendPaymentRejectedEmailListener
     /**
      * Handle the event.
      */
-    public function handle(PaymentRejectEvent $event): void
+    public function handle(PaymentRejected $event): void
     {
         SendPaymentRejectedEmailJob::dispatch($event->payment->user, 'Payment ' . $event->payment->id . ' Rejected');
     }

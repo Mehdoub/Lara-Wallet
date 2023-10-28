@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Enums\TransferPayment\Status;
-use App\Events\UpdateTransactionEvent;
+use App\Events\TransactionUpdated;
 use App\Exceptions\BadRequestException;
 use App\Facades\Response;
 use App\Http\Controllers\Controller;
@@ -44,7 +44,7 @@ class TransferPaymentController extends Controller
             'amount' => $newTransferPayment->amount * -1,
             'balance' => $fromUserBalance,
         ]);
-        UpdateTransactionEvent::dispatch($withdrawTransaction);
+        TransactionUpdated::dispatch($withdrawTransaction);
 
         $toUserBalance = Transaction::calcBalance($newTransferPayment->to_user_id, $newTransferPayment->currency_id);
         $toUserBalance += $newTransferPayment->amount;
@@ -55,7 +55,7 @@ class TransferPaymentController extends Controller
             'amount' => $newTransferPayment->amount,
             'balance' => $toUserBalance,
         ]);
-        UpdateTransactionEvent::dispatch($depositTransaction);
+        TransactionUpdated::dispatch($depositTransaction);
 
         $newTransferPayment->update([
             'status' => Status::TRANSFERRED,

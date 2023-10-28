@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Enums\Payment\Status;
-use App\Events\PaymentRejectEvent;
-use App\Events\PaymentVerifyEvent;
-use App\Events\UpdateTransactionEvent;
+use App\Events\PaymentRejected;
+use App\Events\PaymentVerified;
+use App\Events\TransactionUpdated;
 use App\Exceptions\BadRequestException;
 use App\Exceptions\NotFoundException;
 use App\Facades\Response;
@@ -81,7 +81,7 @@ class PaymentController extends Controller
                 'status_updated_by' => auth()->user()->id,
             ]);
 
-            PaymentRejectEvent::dispatch($payment);
+            PaymentRejected::dispatch($payment);
         }
 
         return Response::message(__('payment.messages.the_payment_was_successfully_rejected'))->data($payment)->send();
@@ -130,9 +130,9 @@ class PaymentController extends Controller
             'balance' => $balance
         ]);
 
-        UpdateTransactionEvent::dispatch($transaction);
+        TransactionUpdated::dispatch($transaction);
 
-        PaymentVerifyEvent::dispatch($payment);
+        PaymentVerified::dispatch($payment);
 
         return Response::message('Payment Successfully Verified')->data($payment)->send();
     }
