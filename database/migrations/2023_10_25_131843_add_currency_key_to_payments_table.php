@@ -25,10 +25,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::disableForeignKeyConstraints();
         Schema::table('payments', function (Blueprint $table) {
+            $table->dropForeign('payments_currency_key_foreign');
             $table->dropColumn('currency_key');
         });
-        Schema::enableForeignKeyConstraints();
     }
 };

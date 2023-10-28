@@ -8,15 +8,15 @@ use App\Exceptions\BadRequestException;
 use App\Facades\Response;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\StoreTransferPaymentRequest;
+use App\Models\CreditTransferLog;
 use App\Models\Transaction;
-use App\Models\TransferPayment;
 use Illuminate\Support\Facades\DB;
 
 class TransferPaymentController extends Controller
 {
     public function store(StoreTransferPaymentRequest $request)
     {
-        $newTransferPayment = TransferPayment::create([
+        $newTransferPayment = CreditTransferLog::create([
             'from_user_id' => $request->from_user_id,
             'to_user_id' => $request->to_user_id,
             'amount' => $request->amount,

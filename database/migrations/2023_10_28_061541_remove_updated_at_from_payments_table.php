@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('transactions', function (Blueprint $table) {
-            $table->boolean('is_transferpayment')->default(false);
+        Schema::table('payments', function (Blueprint $table) {
+            $table->dropColumn('updated_at');
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('transactions', function (Blueprint $table) {
-            $table->dropColumn('is_transferpayment');
+        Schema::table('payments', function (Blueprint $table) {
+            $table->timestamp('updated_at')->nullable();
         });
     }
 };

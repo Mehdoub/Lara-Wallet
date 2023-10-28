@@ -12,7 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('transactions', function (Blueprint $table) {
-            $table->dropColumn('is_transferpayment');
+            $table->dropColumn('currency');
+            $table->string('currency_key');
+            $table->foreign('currency_key')
+                ->references('key')
+                ->on('currencies')
+                ->onUpdate('cascade');
         });
     }
 
@@ -22,7 +27,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('transactions', function (Blueprint $table) {
-            $table->boolean('is_transferpayment')->default(false);
+            $table->string('currency');
+            $table->dropForeign('transactions_currency_key_foreign');
+            $table->dropColumn('currency_key');
         });
     }
 };

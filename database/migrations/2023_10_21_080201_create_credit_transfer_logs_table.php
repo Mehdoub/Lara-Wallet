@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\TransferPayment\Status;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,14 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('transfer_payments', function (Blueprint $table) {
+        Schema::create('credit_transfer_logs', function (Blueprint $table) {
             $table->id();
             $table->double('amount');
-            $table->foreignId('currency_id')->constrained('currencies');
+            $table->string('currency_key');
+            $table->foreign('currency_key')
+                ->references('key')
+                ->on('currencies')
+                ->onUpdate('cascade');
             $table->foreignId('from_user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('to_user_id')->constrained('users')->onDelete('cascade');
-            $table->enum('status', Status::values())->default(Status::PENDING);
-            $table->timestamps();
+            $table->timestamp('created_at')->nullable();
         });
     }
 
@@ -28,8 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::disableForeignKeyConstraints();
-        Schema::dropIfExists('transfer_payments');
-        Schema::enableForeignKeyConstraints();
+        Schema::dropIfExists('credit_transfer_logs');
     }
 };

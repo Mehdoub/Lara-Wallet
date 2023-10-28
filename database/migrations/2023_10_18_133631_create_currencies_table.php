@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('symbol');
-            $table->string('abbr');
+            $table->string('iso_code');
+            $table->string('key')->unique();
             $table->boolean('is_active')->default(false);
             $table->timestamps();
         });
@@ -26,8 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('currencies');
-        Schema::enableForeignKeyConstraints();
     }
 };

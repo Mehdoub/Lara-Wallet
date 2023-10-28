@@ -18,7 +18,7 @@ return new class extends Migration
             $table->double('amount');
             $table->string('currency');
             $table->double('balance');
-            $table->timestamps();
+            $table->timestamp('created_at')->nullable();
         });
     }
 
