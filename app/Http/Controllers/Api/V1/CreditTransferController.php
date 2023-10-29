@@ -17,6 +17,16 @@ class CreditTransferController extends Controller
     {
         DB::beginTransaction();
 
+        $creditTransferLog = CreditTransferLog::create([
+            'from_user_id' => $request->from_user_id,
+            'to_user_id' => $request->to_user_id,
+            'amount' => $request->amount,
+            'currency_key' => $request->currency_key,
+        ]);
+
+        $creditTransferLog->fromUser->transactions()->lockForUpdate();
+        $creditTransferLog->toUser->transactions()->lockForUpdate();
+
         $fromUserBalance = Transaction::calcBalance($request->from_user_id, $request->currency_key);
         if (
             !$fromUserBalance
@@ -39,13 +49,9 @@ class CreditTransferController extends Controller
         ]);
         TransactionUpdated::dispatch($depositTransaction);
 
-        CreditTransferLog::create([
-            'from_user_id' => $request->from_user_id,
-            'to_user_id' => $request->to_user_id,
+        $creditTransferLog::update([
             'withdraw_transaction_id' => $withdrawTransaction->id,
             'deposit_transaction_id' => $depositTransaction->id,
-            'amount' => $request->amount,
-            'currency_key' => $request->currency_key,
         ]);
 
         DB::commit();

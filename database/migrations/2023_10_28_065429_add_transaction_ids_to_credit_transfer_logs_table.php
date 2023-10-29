@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('credit_transfer_logs', function (Blueprint $table) {
-            $table->foreignId('withdraw_transaction_id')->constrained('transactions');
-            $table->foreignId('deposit_transaction_id')->constrained('transactions');
+            $table->foreignId('withdraw_transaction_id')->nullable()->constrained('transactions');
+            $table->foreignId('deposit_transaction_id')->nullable()->constrained('transactions');
         });
     }
 

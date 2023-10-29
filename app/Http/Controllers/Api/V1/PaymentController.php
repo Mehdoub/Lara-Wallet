@@ -15,6 +15,7 @@ use App\Http\Resources\PaymentResource;
 use App\Models\Payment;
 use App\Models\Transaction;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class PaymentController extends Controller
 {
@@ -107,6 +108,7 @@ class PaymentController extends Controller
             throw new BadRequestException(__('currency.errors.currency_is_not_active'));
         }
 
+        DB::beginTransaction();
         $payment->update([
             'status' => PaymentStatus::VERIFIED,
             'status_updated_at' => Carbon::now(),
@@ -121,8 +123,8 @@ class PaymentController extends Controller
         ]);
 
         TransactionUpdated::dispatch($transaction);
-
         PaymentVerified::dispatch($payment);
+        DB::commit();
 
         return Response::message(__('payment.messages.payment_successfully_verified'))
             ->data(new PaymentResource($payment))
