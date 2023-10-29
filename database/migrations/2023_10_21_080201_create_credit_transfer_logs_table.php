@@ -21,7 +21,7 @@ return new class extends Migration
                 ->onUpdate('cascade');
             $table->foreignId('from_user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('to_user_id')->constrained('users')->onDelete('cascade');
-            $table->timestamp('created_at')->nullable();
+            $table->timestamps();
         });
     }
 

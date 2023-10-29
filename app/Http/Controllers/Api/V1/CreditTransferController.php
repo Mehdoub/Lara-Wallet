@@ -49,7 +49,7 @@ class CreditTransferController extends Controller
         ]);
         TransactionUpdated::dispatch($depositTransaction);
 
-        $creditTransferLog::update([
+        $creditTransferLog->update([
             'withdraw_transaction_id' => $withdrawTransaction->id,
             'deposit_transaction_id' => $depositTransaction->id,
         ]);
