@@ -81,7 +81,7 @@
                 }
             }
         },
-        "/api/v1/currencies/{currency_id}/activate": {
+        "/api/v1/currencies/{key}/activate": {
             "patch": {
                 "tags": [
                     "CURRENCY"
@@ -128,7 +128,7 @@
                 }
             }
         },
-        "/api/v1/currencies/{currency_id}/deactivate": {
+        "/api/v1/currencies/{key}/deactivate": {
             "patch": {
                 "tags": [
                     "CURRENCY"

@@ -14,7 +14,7 @@ class CurrencyController extends Controller
 {
     public function index()
     {
-        $currencies = Currency::where('is_active', 1)->get();
+        $currencies = Currency::isActive()->paginate(1);
 
         return Response::message(__('currency.messages.currencies_found'))
             ->data(new CurrencyCollection($currencies))
@@ -24,9 +24,10 @@ class CurrencyController extends Controller
     public function store(CurrencyStoreRequest $request)
     {
         $newCurrency = Currency::create([
+            'key' => $request->key,
             'name' => $request->name,
             'symbol' => $request->symbol,
-            'abbr' => $request->abbr,
+            'iso_code' => $request->iso_code,
         ]);
 
         return Response::message(__('currency.messages.currency_created'))
@@ -34,9 +35,9 @@ class CurrencyController extends Controller
             ->send();
     }
 
-    public function activate($id)
+    public function activate($key)
     {
-        $currency = Currency::find($id);
+        $currency = Currency::hasKey($key)->first();
 
         if (!$currency) {
             throw new NotFoundException(__('currency.errors.currency_notfound'));
@@ -51,9 +52,9 @@ class CurrencyController extends Controller
         return Response::message(__('currency.messages.successfully_avtivated'))->send();
     }
 
-    public function deactivate($id)
+    public function deactivate($key)
     {
-        $currency = Currency::find($id);
+        $currency = Currency::hasKey($key)->first();
 
         if (!$currency) {
             throw new NotFoundException(__('currency.errors.currency_notfound'));

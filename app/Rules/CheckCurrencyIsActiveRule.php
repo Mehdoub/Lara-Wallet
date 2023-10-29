@@ -6,7 +6,7 @@ use App\Models\Currency;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 
-class CurrencyCustomRules implements ValidationRule
+class CheckCurrencyIsActiveRule implements ValidationRule
 {
     /**
      * Run the validation rule.
@@ -15,11 +15,8 @@ class CurrencyCustomRules implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        switch($attribute) {
-            case 'currency_id':
-                $currency = Currency::find($value);
-                if ($currency and !$currency->is_active) $fail(__('currency.errors.currency_is_not_active'));
-                break;
-        }
+        $currency = Currency::hasKey($value)->first();
+        if (!$currency) $fail(__('currency.errors.currency_notfound'));
+        else if (!$currency->is_active) $fail(__('currency.errors.currency_is_not_active'));
     }
 }

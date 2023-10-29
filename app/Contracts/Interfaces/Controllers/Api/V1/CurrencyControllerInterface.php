@@ -56,7 +56,7 @@ class CurrencyControllerDoc
 
     /**
      * @OA\Patch(
-     *     path="/api/v1/currencies/{currency_id}/activate",
+     *     path="/api/v1/currencies/{key}/activate",
      *     operationId="CurrencyActivate",
      *     tags={"CURRENCY"},
      *
@@ -84,10 +84,11 @@ class CurrencyControllerDoc
     public function activate()
     {
     }
+    // TODO use contracts and interfaces
 
     /**
      * @OA\Patch(
-     *     path="/api/v1/currencies/{currency_id}/deactivate",
+     *     path="/api/v1/currencies/{key}/deactivate",
      *     operationId="CurrencyDeactivate",
      *     tags={"CURRENCY"},
      *
