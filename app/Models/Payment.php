@@ -2,9 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\Payment\Priceunit;
-use App\Enums\Payment\Status;
-use App\Enums\Payment\Type;
+use App\Enums\Payment\PaymentStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -12,11 +10,24 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Payment extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     protected $guarded = ['id'];
     protected $casts = [
-        'status' => Status::class,
+        'status' => PaymentStatus::class,
     ];
+
+    public function getRouteKeyName()
+    {
+        return 'unique_id';
+    }
+
+    protected static function booted()
+    {
+        static::creating(function($payment) {
+            $payment->unique_id = uniqid();
+        });
+    }
 
     public function user()
     {
@@ -30,6 +41,6 @@ class Payment extends Model
 
     public function currency()
     {
-        return $this->belongsTo(Currency::class, 'currency_id');
+        return $this->belongsTo(Currency::class, 'currency_key', 'key');
     }
 }

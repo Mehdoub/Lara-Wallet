@@ -15,6 +15,11 @@ class Currency extends Model
         'is_active' => 'boolean'
     ];
 
+    public function getRouteKeyName()
+    {
+        return 'key';
+    }
+
     public function scopeIsActive(Builder $query): void
     {
         $query->where('is_active', 1);

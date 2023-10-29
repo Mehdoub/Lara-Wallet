@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Enums\Payment\Status;
+use App\Enums\Payment\PaymentStatus;
 use App\Events\PaymentRejected;
 use App\Events\PaymentVerified;
 use App\Events\TransactionUpdated;
 use App\Exceptions\BadRequestException;
-use App\Exceptions\NotFoundException;
 use App\Facades\Response;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\CreatePaymentRequest;
@@ -24,9 +23,11 @@ class PaymentController extends Controller
      */
     public function index()
     {
-        $payments = Payment::query()->paginate();
+        $payments = Payment::query()->paginate(2);
 
-        return Response::message(__('payment.messages.payment_list_found_successfully'))->data(new PaymentCollection($payments))->send();
+        return Response::message(__('payment.messages.payment_list_found_successfully'))
+            ->data(new PaymentCollection($payments))
+            ->send();
     }
 
     /**
@@ -36,24 +37,27 @@ class PaymentController extends Controller
     {
         $recentDuplicatePaymentExists = Payment::query()->where([
             ['amount', $request->amount],
-            ['currency_id', $request->currency_id],
+            ['currency_key', $request->currency_key],
             ['created_at', '>', Carbon::now()->subMinutes(5)]
         ])->first();
 
-        if ($recentDuplicatePaymentExists) throw new BadRequestException(__('payment.messages.duplicate_payment_exists', [
-            'amount' => $recentDuplicatePaymentExists->amount,
-            'currency' => $recentDuplicatePaymentExists->currency->name,
-        ]));
+        if ($recentDuplicatePaymentExists) {
+            throw new BadRequestException(__('payment.messages.duplicate_payment_exists', [
+                'amount' => $recentDuplicatePaymentExists->amount,
+                'currency' => $recentDuplicatePaymentExists->currency->name,
+            ]));
+        }
 
         $newPayment = Payment::create([
             'user_id' => auth()->user()->id,
             'amount' => $request->amount,
-            'currency_id' => $request->currency_id,
-            'type' => $request->type,
-            'unique_id' => uniqid()
+            'currency_key' => $request->currency_key,
+            'type' => $request->type
         ]);
 
-        return Response::message(__('payment.messages.payment_successfuly_created'))->data($newPayment)->send();
+        return Response::message(__('payment.messages.payment_successfully_created'))
+            ->data(new PaymentResource($newPayment))
+            ->send();
     }
 
     /**
@@ -62,21 +66,15 @@ class PaymentController extends Controller
      * @param  Payment $payment
      * @return void
      */
-    public function reject($id)
+    public function reject(Payment $payment)
     {
-        $payment = Payment::find($id);
-
-        if (!$payment) {
-            throw new NotFoundException(__('payment.errors.payment_notfound'));
-        }
-
-        if ($payment->status !== Status::PENDING) {
+        if ($payment->status !== PaymentStatus::PENDING) {
             throw new BadRequestException(__('payment.errors.you_can_only_decline_pending_payments'));
         }
 
-        if ($payment->status == Status::PENDING) {
+        if ($payment->status == PaymentStatus::PENDING) {
             $payment->update([
-                'status' => Status::REJECTED,
+                'status' => PaymentStatus::REJECTED,
                 'status_updated_at' => Carbon::now(),
                 'status_updated_by' => auth()->user()->id,
             ]);
@@ -84,7 +82,9 @@ class PaymentController extends Controller
             PaymentRejected::dispatch($payment);
         }
 
-        return Response::message(__('payment.messages.the_payment_was_successfully_rejected'))->data($payment)->send();
+        return Response::message(__('payment.messages.the_payment_was_successfully_rejected'))
+            ->data(new PaymentResource($payment))
+            ->send();
     }
 
     /**
@@ -93,20 +93,14 @@ class PaymentController extends Controller
      * @param  Payment $payment
      * @return void
      */
-    public function verify($id)
+    public function verify(Payment $payment)
     {
-        $payment = Payment::find($id);
-
-        if (!$payment) {
-            throw new NotFoundException(__('payment.errors.payment_notfound'));
-        }
-
-        if ($payment->status !== Status::PENDING) {
-            throw new BadRequestException('Payment Status Already Has Been Changed');
+        if ($payment->status !== PaymentStatus::PENDING) {
+            throw new BadRequestException(__('payment.errors.you_can_only_verify_pending_payments'));
         }
 
         if ($payment->transaction) {
-            throw new BadRequestException('This Payment Already Has a Transaction!');
+            throw new BadRequestException(__('payment.errors.payment_has_transaction'));
         }
 
         if (!$payment->currency->is_active) {
@@ -114,40 +108,32 @@ class PaymentController extends Controller
         }
 
         $payment->update([
-            'status' => Status::VERIFIED,
+            'status' => PaymentStatus::VERIFIED,
             'status_updated_at' => Carbon::now(),
             'status_updated_by' => auth()->user()->id,
         ]);
 
-        $balance = Transaction::calcBalance($payment->user_id, $payment->currency_id);
-        $balance += $payment->amount;
-
         $transaction = Transaction::create([
             'user_id' => $payment->user_id,
             'payment_id' => $payment->id,
-            'currency_id' => $payment->currency_id,
-            'amount' => $payment->amount,
-            'balance' => $balance
+            'currency_key' => $payment->currency_key,
+            'amount' => $payment->amount
         ]);
 
         TransactionUpdated::dispatch($transaction);
 
         PaymentVerified::dispatch($payment);
 
-        return Response::message('Payment Successfully Verified')->data($payment)->send();
+        return Response::message(__('payment.messages.payment_successfully_verified'))
+            ->data(new PaymentResource($payment))
+            ->send();
     }
 
     /**
      * Return Payment with specifice ID.
      */
-    public function find($id)
+    public function show(Payment $payment)
     {
-        $payment = Payment::find($id);
-
-        if (!$payment) {
-            throw new NotFoundException(__('payment.errors.payment_notfound'));
-        }
-
         return Response::message(__('payment.messages.payment_successfuly_found'))
             ->data(new PaymentResource($payment))
             ->send();

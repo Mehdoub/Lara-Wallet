@@ -10,9 +10,16 @@ class Transaction extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
-    protected $casts = [
-        'is_transferpayment' => 'boolean'
-    ];
+
+    protected static function booted()
+    {
+        static::created(function ($transaction) {
+            $transaction->balance = Transaction::where('user_id', $transaction->user->id)
+                ->where('currency_key', $transaction->currency->key)
+                ->sum('amount');
+            $transaction->save();
+        });
+    }
 
     public function user()
     {
@@ -24,10 +31,15 @@ class Transaction extends Model
         return $this->belongsTo(Payment::class, 'payment_id');
     }
 
-    public static function calcBalance($userId, $currencyId)
+    public function currency()
+    {
+        return $this->belongsTo(Currency::class, 'currency_key', 'key');
+    }
+
+    public static function calcBalance($userId, $currencyKey)
     {
         return Transaction::where('user_id', $userId)
-            ->where('currency_id', $currencyId)
+            ->where('currency_key', $currencyKey)
             ->sum('amount');
     }
 }

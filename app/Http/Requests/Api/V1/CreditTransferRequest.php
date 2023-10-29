@@ -2,10 +2,10 @@
 
 namespace App\Http\Requests\Api\V1;
 
-use App\Rules\CurrencyCustomRules;
+use App\Rules\CheckCurrencyIsActiveRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreTransferPaymentRequest extends FormRequest
+class CreditTransferRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +24,7 @@ class StoreTransferPaymentRequest extends FormRequest
     {
         return [
             'amount' => ['required', 'numeric', 'min:0', 'not_in:0'],
-            'currency_id' => ['required', 'numeric', 'exists:currencies,id', new CurrencyCustomRules],
+            'currency_key' => ['required', 'string', new CheckCurrencyIsActiveRule],
             'from_user_id' => ['required', 'numeric', 'exists:users,id'],
             'to_user_id' => ['required', 'numeric', 'exists:users,id'],
         ];

@@ -17,8 +17,8 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->double('amount');
             $table->string('currency');
-            $table->double('balance');
-            $table->timestamp('created_at')->nullable();
+            $table->double('balance')->nullable();
+            $table->timestamps();
         });
     }
 

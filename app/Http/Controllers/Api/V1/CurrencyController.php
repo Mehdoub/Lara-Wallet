@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Exceptions\BadRequestException;
-use App\Exceptions\NotFoundException;
 use App\Facades\Response;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\CurrencyStoreRequest;
@@ -35,37 +34,25 @@ class CurrencyController extends Controller
             ->send();
     }
 
-    public function activate($key)
+    public function activate(Currency $currency)
     {
-        $currency = Currency::hasKey($key)->first();
-
-        if (!$currency) {
-            throw new NotFoundException(__('currency.errors.currency_notfound'));
-        }
-
         if ($currency->is_active) {
             throw new BadRequestException(__('currency.errors.already_activated'));
         }
 
         $currency->update(['is_active' => true]);
 
-        return Response::message(__('currency.messages.successfully_avtivated'))->send();
+        return Response::message(__('currency.messages.successfully_activated'))->send();
     }
 
-    public function deactivate($key)
+    public function deactivate(Currency $currency)
     {
-        $currency = Currency::hasKey($key)->first();
-
-        if (!$currency) {
-            throw new NotFoundException(__('currency.errors.currency_notfound'));
-        }
-
         if (!$currency->is_active) {
             throw new BadRequestException(__('currency.errors.already_deactivated'));
         }
 
         $currency->update(['is_active' => false]);
 
-        return Response::message(__('currency.messages.successfully_deavtivated'))->send();
+        return Response::message(__('currency.messages.successfully_deactivated'))->send();
     }
 }

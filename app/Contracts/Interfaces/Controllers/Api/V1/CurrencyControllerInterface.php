@@ -84,7 +84,6 @@ class CurrencyControllerDoc
     public function activate()
     {
     }
-    // TODO use contracts and interfaces
 
     /**
      * @OA\Patch(

@@ -4,7 +4,7 @@ namespace App\Enums\Payment;
 
 use App\Enums\EnumBase;
 
-enum Status : string
+enum PaymentStatus : string
 {
     use EnumBase;
 

@@ -21,11 +21,11 @@ class UpdateUserBalanceListener
      */
     public function handle(TransactionUpdated $event): void
     {
-        $userBalance = (array) json_decode($event->transaction->user->balance);
-        $userBalance[$event->transaction->currency_id] = $event->transaction->balance;
+        $userBalance = $event->transaction->user->balance;
+        $userBalance[$event->transaction->currency_key] = $event->transaction->balance;
 
         $event->transaction->user()->update([
-            'balance' => json_encode($userBalance)
+            'balance' => $userBalance
         ]);
     }
 }
