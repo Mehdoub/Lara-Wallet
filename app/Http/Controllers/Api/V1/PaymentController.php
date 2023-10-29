@@ -140,4 +140,21 @@ class PaymentController extends Controller
             ->data(new PaymentResource($payment))
             ->send();
     }
+
+    /**
+     * Soft Delete Given Pending Payment
+     *
+     * @param  Payment $payment
+     * @return void
+     */
+    public function destroy(Payment $payment)
+    {
+        if ($payment->status !== PaymentStatus::PENDING) {
+            throw new BadRequestException(__('payment.errors.cant_destroy_pending'));
+        }
+
+        $payment->delete();
+
+        return Response::message(__('payment.messages.successfully_removed'))->send();
+    }
 }

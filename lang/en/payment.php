@@ -9,7 +9,8 @@ return [
         "payment_successfuly_found" => "Payment successfuly found",
         "the_payment_was_successfully_rejected" => "The payment was successfully rejected",
         "balance_transferred" => "Balance Successfully Transferred",
-        "duplicate_payment_exists" => "A Similar Payment (:amount :currency) Has Done In Recent 5 Minutes"
+        "duplicate_payment_exists" => "A Similar Payment (:amount :currency) Has Done In Recent 5 Minutes",
+        "successfully_removed" => "Payment Successfully Removed",
     ],
     "validations" => [],
     "errors" => [
@@ -19,6 +20,7 @@ return [
         "payment_has_transaction" => "This Payment Already Has a Transaction",
         "from_user_notfound" => "Origin User Not Found",
         "to_user_notfound" => "Destination User Not Found",
-        "not_enough_balance" => "Origin User Does Not Have Enough Balance"
+        "not_enough_balance" => "Origin User Does Not Have Enough Balance",
+        "cant_destroy_pending" => "You Can Only Remove Pending Payments",
     ],
 ];

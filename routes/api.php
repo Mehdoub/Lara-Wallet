@@ -26,6 +26,7 @@ Route::group([
     Route::post('payments', [PaymentController::class, 'store']);
     Route::patch('payments/{payment}/reject', [PaymentController::class, 'reject']);
     Route::patch('payments/{payment}/verify', [PaymentController::class, 'verify']);
+    Route::delete('payments/{payment}/destroy', [PaymentController::class, 'destroy']);
 
     Route::get('currencies', [CurrencyController::class, 'index']);
     Route::post('currencies', [CurrencyController::class, 'store']);

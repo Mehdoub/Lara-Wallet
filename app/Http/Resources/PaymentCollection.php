@@ -15,7 +15,7 @@ class PaymentCollection extends ResourceCollection
     public function toArray(Request $request): array
     {
         return [
-            'data' => $this->collection,
+            'docs' => $this->collection,
             'pagination' => [
                 'total' => $this->total(),
                 'per_page' => $this->perPage(),
