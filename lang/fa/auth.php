@@ -14,16 +14,17 @@ return [
     */
     'enums' => [],
     'messages' => [
-        'logged_in' => 'User Successfully Logged In',
-        'registered' => 'User Successfully Registered',
-        'logged_out' => 'User Successfully Logged Out',
-        'tkn_refreshed' => 'New Access Token Generated',
+        'logged_in' => 'کاربر با موفقیت وارد شد',
+        'registered' => 'ثبت نام با موفقیت انجام شد',
+        'logged_out' => 'کاربر با موفقیت خارج شد',
+        'tkn_refreshed' => 'توکن احراز جدید ایجاد شد',
+        'user_found' => 'اطلاعات کاربر یافت شد',
     ],
     'validations' => [],
     'errors' => [
-        'failed' => 'These credentials do not match our records.',
-        'password' => 'The provided password is incorrect.',
-        'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
-        'unauthorized' => 'You Are Not Authorized'
+        'failed' => 'اطلاعات وارد شده با داده های ما مطابقت ندارد',
+        'password' => 'رمز عبور وارد شده صحیح نیست',
+        'throttle' => 'تلاش های زیادی برای ورود انجام شده است. لطفاً بعد از چند ثانیه دوباره امتحان کنید',
+        'unauthorized' => 'شما مجاز نیستید'
     ],
 ];
