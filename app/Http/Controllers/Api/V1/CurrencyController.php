@@ -13,7 +13,7 @@ class CurrencyController extends Controller
 {
     public function index()
     {
-        $currencies = Currency::isActive()->paginate(config('settings.pagination'));
+        $currencies = Currency::isActive()->paginate(config('settings.global.pagination'));
 
         return Response::message(__('currency.messages.currencies_found'))
             ->data(new CurrencyCollection($currencies))
