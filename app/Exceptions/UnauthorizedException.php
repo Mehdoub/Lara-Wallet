@@ -6,7 +6,7 @@ use Illuminate\Http\Response;
 
 class UnauthorizedException extends CustomException
 {
-    protected $message = 'Unauthorized';
+    protected $message = null;
     protected $errors = [];
 
     public function __construct(string $message = '', array $errors = [])
@@ -17,7 +17,7 @@ class UnauthorizedException extends CustomException
 
     public function message(): string
     {
-        return $this->message;
+        return $this->message ?: __('auth.errors.unauthorized');
     }
 
     public function status(): string

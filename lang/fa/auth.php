@@ -12,9 +12,18 @@ return [
     | these language lines according to your application's requirements.
     |
     */
-
-    'failed' => 'These credentials do not match our records.',
-    'password' => 'The provided password is incorrect.',
-    'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
-
+    'enums' => [],
+    'messages' => [
+        'logged_in' => 'User Successfully Logged In',
+        'registered' => 'User Successfully Registered',
+        'logged_out' => 'User Successfully Logged Out',
+        'tkn_refreshed' => 'New Access Token Generated',
+    ],
+    'validations' => [],
+    'errors' => [
+        'failed' => 'These credentials do not match our records.',
+        'password' => 'The provided password is incorrect.',
+        'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
+        'unauthorized' => 'You Are Not Authorized'
+    ],
 ];

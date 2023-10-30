@@ -13,7 +13,7 @@ class AuthController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login' , 'register']]);
+        $this->middleware('auth:api', ['except' => ['login' , 'register', 'refresh']]);
     }
 
     public function login()
@@ -21,9 +21,9 @@ class AuthController extends Controller
         $credentials = request(['email', 'password']);
         $token = auth()->attempt($credentials);
 
-        if(!$token) throw new UnauthorizedException(__('auth.failed'));
+        if(!$token) throw new UnauthorizedException(__('auth.errors.failed'));
 
-        return Response::message(__('auth.logged_in'))->data(['access_token' => $token])->send();
+        return Response::message(__('auth.messages.logged_in'))->data(['access_token' => $token])->send();
     }
 
     public function register(RegisterRequest $request)
@@ -34,22 +34,22 @@ class AuthController extends Controller
             'password' => Hash::make($request->password)
         ]);
 
-        return Response::message(__('auth.registered'))->send();
+        return Response::message(__('auth.messages.registered'))->send();
     }
 
     public function refresh()
     {
-        return Response::message(__(''))->data(['access_token' => auth()->refresh()])->send();
+        return Response::message(__('auth.messages.tkn_refreshed'))->data(['access_token' => auth()->refresh()])->send();
     }
 
     public function getme()
     {
-        return Response::message(__(''))->data(auth()->user())->send();
+        return Response::message(__('auth.messages.user_found'))->data(auth()->user())->send();
     }
 
     public function logout()
     {
         auth()->logout();
-        return Response::message(__('auth.logged_out'))->send();
+        return Response::message(__('auth.messages.logged_out'))->send();
     }
 }
