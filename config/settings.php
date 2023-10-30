@@ -2,8 +2,7 @@
 
 return [
     'system' => [
-        'api_limit_rate_user' => 100,
-        'api_limit_rate_admin' => 200,
+        'api_request_limit_rate' => '60,1',
     ],
     'global' => [
         'pagination' => 10,

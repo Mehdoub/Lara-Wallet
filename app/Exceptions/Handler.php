@@ -22,7 +22,6 @@ class Handler extends ExceptionHandler
     ];
 
     private $customExceptions = [
-        AuthFailedException::class,
         BadRequestException::class,
         ForbiddenAccessException::class,
         NotFoundException::class,
@@ -45,7 +44,7 @@ class Handler extends ExceptionHandler
             throw new NotFoundException();
         }
         if ($e instanceof AuthenticationException) {
-            throw new AuthFailedException();
+            throw new UnauthorizedException();
         }
 
         if (in_array(get_class($e), $this->customExceptions)) {
