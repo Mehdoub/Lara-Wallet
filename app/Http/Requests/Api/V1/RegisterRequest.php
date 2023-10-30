@@ -21,10 +21,16 @@ class RegisterRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'name' => ['required', 'string', 'min:3', 'max:60'],
-            'email' => ['required', 'email', 'max:60', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'max:20'],
-        ];
+        $validations = [];
+
+        switch($this->method()) {
+            case 'POST':
+                $validations['name'] = ['required', 'string', 'min:3', 'max:60'];
+                $validations['email'] = ['required', 'email', 'max:60', 'unique:users'];
+                $validations['password'] = ['required', 'string', 'min:8', 'max:20'];
+                break;
+        }
+
+        return $validations;
     }
 }

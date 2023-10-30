@@ -22,12 +22,18 @@ class CreditTransferRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'amount' => ['required', 'numeric', 'min:0', 'not_in:0'],
-            'currency_key' => ['required', 'string', new CheckCurrencyIsActiveRule],
-            'from_user_id' => ['required', 'numeric', 'exists:users,id'],
-            'to_user_id' => ['required', 'numeric', 'exists:users,id'],
-        ];
+        $validations = [];
+
+        switch($this->method()) {
+            case 'POST':
+                $validations['amount'] = ['required', 'numeric', 'min:0', 'not_in:0'];
+                $validations['currency_key'] = ['required', 'string', new CheckCurrencyIsActiveRule];
+                $validations['from_user_id'] = ['required', 'numeric', 'exists:users,id'];
+                $validations['to_user_id'] = ['required', 'numeric', 'exists:users,id'];
+                break;
+        }
+
+        return $validations;
     }
 
     public function messages()
