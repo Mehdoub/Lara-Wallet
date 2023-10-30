@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Contracts\Interfaces\Controllers\Api\V1\PaymentControllerInterface;
 use App\Enums\Payment\PaymentStatus;
 use App\Events\PaymentRejected;
 use App\Events\PaymentVerified;
@@ -17,7 +18,7 @@ use App\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
-class PaymentController extends Controller
+class PaymentController extends Controller implements PaymentControllerInterface
 {
     /**
      * Display a listing of the resource.

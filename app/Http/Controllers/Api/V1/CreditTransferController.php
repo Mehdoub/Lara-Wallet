@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Contracts\Interfaces\Controllers\Api\V1\CreditTransferControllerInterface;
 use App\Events\TransactionUpdated;
 use App\Exceptions\BadRequestException;
 use App\Facades\Response;
@@ -11,7 +12,7 @@ use App\Models\CreditTransferLog;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\DB;
 
-class CreditTransferController extends Controller
+class CreditTransferController extends Controller implements CreditTransferControllerInterface
 {
     public function transfer(CreditTransferRequest $request)
     {

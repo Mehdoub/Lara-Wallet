@@ -2,55 +2,31 @@
 
 namespace App\Contracts\Interfaces\Controllers\Api\V1;
 
-use App\Http\Requests\Api\V1\CreatePaymentRequest;
-use App\Models\Payment;
+use App\Http\Requests\Api\V1\RegisterRequest;
 
-interface PaymentControllerInterface
+interface AuthControllerInterface
 {
-
-    /**
-     * @OA\Get(
-     *     path="/api/v1/payments",
-     *     operationId="PaymentIndex",
-     *     tags={"PAYMENT"},
-     *
-     *     summary="Payment List",
-     *
-     *      security={{"bearerAuth":{}}},
-     *      @OA\Response(response=200, description="Successful operation"),
-     *      @OA\Response(response=201, description="Successful operation"),
-     *      @OA\Response(response=202, description="Successful operation"),
-     *      @OA\Response(response=204, description="Successful operation"),
-     *      @OA\Response(response=400, description="Bad Request"),
-     *      @OA\Response(response=401, description="Unauthenticated"),
-     *      @OA\Response(response=403, description="Forbidden"),
-     *      @OA\Response(response=404, description="Resource Not Found")
-     * )
-     */
-    public function index();
-
     /**
      * @OA\Post(
-     *     path="/api/v1/payments",
-     *     operationId="PaymentStore",
-     *     tags={"PAYMENT"},
+     *     path="/api/v1/auth/login",
+     *     operationId="AuthLogin",
+     *     tags={"AUTH"},
      *
-     *     summary="Payment Create",
+     *     summary="User Login",
      *
-     *     @OA\RequestBody(
+     *      @OA\RequestBody(
      *         @OA\JsonContent(),
      *         @OA\MediaType(
      *            mediaType="multipart/form-data",
      *            @OA\Schema(
      *                  type="object",
-     *                  required={"amount","currency_key"},
-     *                  @OA\Property(property="amount", type="text"),
-     *                  @OA\Property(property="currency_key", type="text"),
+     *                  required={"email","password"},
+     *                  @OA\Property(property="email", type="text"),
+     *                  @OA\Property(property="password", type="text"),
      *            ),
-     *        ),
-     *    ),
+     *         ),
+     *      ),
      *
-     *      security={{"bearerAuth":{}}},
      *      @OA\Response(response=200, description="Successful operation"),
      *      @OA\Response(response=201, description="Successful operation"),
      *      @OA\Response(response=202, description="Successful operation"),
@@ -61,26 +37,30 @@ interface PaymentControllerInterface
      *      @OA\Response(response=404, description="Resource Not Found")
      * )
      */
-    public function store(CreatePaymentRequest $request);
+    public function login();
 
     /**
-     * @OA\Patch(
-     *     path="/api/v1/payments/{payment}/reject",
-     *     operationId="PaymentReject",
-     *     tags={"PAYMENT"},
+     * @OA\Post(
+     *     path="/api/v1/auth/register",
+     *     operationId="AuthRegister",
+     *     tags={"AUTH"},
      *
-     *     summary="Payment Reject",
+     *     summary="User Register",
      *
-     *      @OA\Parameter(
-     *         name="payment",
-     *         in="path",
-     *         description="payment unique_id",
-     *         required=true,
-     *         example="1",
-     *         @OA\Schema(type="string")
-     *     ),
+     *      @OA\RequestBody(
+     *         @OA\JsonContent(),
+     *         @OA\MediaType(
+     *            mediaType="multipart/form-data",
+     *            @OA\Schema(
+     *                  type="object",
+     *                  required={"name","email","password"},
+     *                  @OA\Property(property="name", type="text"),
+     *                  @OA\Property(property="email", type="text"),
+     *                  @OA\Property(property="password", type="text"),
+     *            ),
+     *         ),
+     *      ),
      *
-     *      security={{"bearerAuth":{}}},
      *      @OA\Response(response=200, description="Successful operation"),
      *      @OA\Response(response=201, description="Successful operation"),
      *      @OA\Response(response=202, description="Successful operation"),
@@ -91,24 +71,15 @@ interface PaymentControllerInterface
      *      @OA\Response(response=404, description="Resource Not Found")
      * )
      */
-    public function reject(Payment $payment);
+    public function register(RegisterRequest $request);
 
     /**
-     * @OA\Patch(
-     *     path="/api/v1/payments/{payment}/verify",
-     *     operationId="PaymentVerify",
-     *     tags={"PAYMENT"},
+     * @OA\Post(
+     *     path="/api/v1/auth/refresh",
+     *     operationId="AuthRefresh",
+     *     tags={"AUTH"},
      *
-     *     summary="Payment Verify",
-     *
-     *      @OA\Parameter(
-     *         name="payment",
-     *         in="path",
-     *         description="payment unique_id",
-     *         required=true,
-     *         example="1",
-     *         @OA\Schema(type="string")
-     *     ),
+     *     summary="Refresh Auth JWT Token",
      *
      *      security={{"bearerAuth":{}}},
      *      @OA\Response(response=200, description="Successful operation"),
@@ -121,24 +92,15 @@ interface PaymentControllerInterface
      *      @OA\Response(response=404, description="Resource Not Found")
      * )
      */
-    public function verify(Payment $payment);
+    public function refresh();
 
     /**
      * @OA\Get(
-     *     path="/api/v1/payments/{payment}",
-     *     operationId="PaymentShow",
-     *     tags={"PAYMENT"},
+     *     path="/api/v1/auth/getme",
+     *     operationId="GetMe",
+     *     tags={"AUTH"},
      *
-     *     summary="Show Payment",
-     *
-     *      @OA\Parameter(
-     *         name="payment",
-     *         in="path",
-     *         description="payment unique_id",
-     *         required=true,
-     *         example="1",
-     *         @OA\Schema(type="string")
-     *     ),
+     *     summary="Get Logged In User Data",
      *
      *      security={{"bearerAuth":{}}},
      *      @OA\Response(response=200, description="Successful operation"),
@@ -151,24 +113,15 @@ interface PaymentControllerInterface
      *      @OA\Response(response=404, description="Resource Not Found")
      * )
      */
-    public function show(Payment $payment);
+    public function getme();
 
     /**
-     * @OA\Delete(
-     *     path="/api/v1/payments/{payment}/destroy",
-     *     operationId="PaymentDelete",
-     *     tags={"PAYMENT"},
+     * @OA\Post(
+     *     path="/api/v1/auth/logout",
+     *     operationId="AuthLogout",
+     *     tags={"AUTH"},
      *
-     *     summary="Delete Payment",
-     *
-     *      @OA\Parameter(
-     *         name="payment",
-     *         in="path",
-     *         description="payment unique_id",
-     *         required=true,
-     *         example="1",
-     *         @OA\Schema(type="string")
-     *     ),
+     *     summary="User Logout",
      *
      *      security={{"bearerAuth":{}}},
      *      @OA\Response(response=200, description="Successful operation"),
@@ -181,5 +134,5 @@ interface PaymentControllerInterface
      *      @OA\Response(response=404, description="Resource Not Found")
      * )
      */
-    public function destroy(Payment $payment);
+    public function logout();
 }

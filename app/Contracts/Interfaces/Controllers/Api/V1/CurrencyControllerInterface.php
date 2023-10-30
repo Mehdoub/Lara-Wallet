@@ -1,8 +1,11 @@
 <?php
 
-namespace App\Http\Swaggers\Api\V1;
+namespace App\Contracts\Interfaces\Controllers\Api\V1;
 
-class CurrencyControllerDoc
+use App\Http\Requests\Api\V1\CurrencyStoreRequest;
+use App\Models\Currency;
+
+interface CurrencyControllerInterface
 {
 /**
      * @OA\Get(
@@ -12,6 +15,7 @@ class CurrencyControllerDoc
      *
      *     summary="Currency List",
      *
+     *      security={{"bearerAuth":{}}},
      *      @OA\Response(response=200, description="Successful operation"),
      *      @OA\Response(response=201, description="Successful operation"),
      *      @OA\Response(response=202, description="Successful operation"),
@@ -22,9 +26,7 @@ class CurrencyControllerDoc
      *      @OA\Response(response=404, description="Resource Not Found")
      * )
      */
-    public function index()
-    {
-    }
+    public function index();
 
     /**
      * @OA\Post(
@@ -36,10 +38,20 @@ class CurrencyControllerDoc
      *
      *      @OA\RequestBody(
      *         @OA\JsonContent(),
-     *         @OA\Schema(type="object", required={"name"}),
-     *         @OA\Property(property="name", type="text"),
-     *     ),
+     *         @OA\MediaType(
+     *            mediaType="multipart/form-data",
+     *            @OA\Schema(
+     *                  type="object",
+     *                  required={"name","iso_code","symbol","key"},
+     *                  @OA\Property(property="name", type="text"),
+     *                  @OA\Property(property="iso_code", type="text"),
+     *                  @OA\Property(property="symbol", type="text"),
+     *                  @OA\Property(property="key", type="text"),
+     *            ),
+     *         ),
+     *      ),
      *
+     *      security={{"bearerAuth":{}}},
      *      @OA\Response(response=200, description="Successful operation"),
      *      @OA\Response(response=201, description="Successful operation"),
      *      @OA\Response(response=202, description="Successful operation"),
@@ -50,9 +62,7 @@ class CurrencyControllerDoc
      *      @OA\Response(response=404, description="Resource Not Found")
      * )
      */
-    public function store()
-    {
-    }
+    public function store(CurrencyStoreRequest $request);
 
     /**
      * @OA\Patch(
@@ -63,14 +73,15 @@ class CurrencyControllerDoc
      *     summary="Currency Activate",
      *
      *      @OA\Parameter(
-     *         name="id",
+     *         name="key",
      *         in="path",
-     *         description="currency id",
+     *         description="currency key",
      *         required=true,
      *         example="1",
-     *         @OA\Schema(type="integer")
+     *         @OA\Schema(type="string")
      *     ),
      *
+     *      security={{"bearerAuth":{}}},
      *      @OA\Response(response=200, description="Successful operation"),
      *      @OA\Response(response=201, description="Successful operation"),
      *      @OA\Response(response=202, description="Successful operation"),
@@ -81,9 +92,7 @@ class CurrencyControllerDoc
      *      @OA\Response(response=404, description="Resource Not Found")
      * )
      */
-    public function activate()
-    {
-    }
+    public function activate(Currency $currency);
 
     /**
      * @OA\Patch(
@@ -94,14 +103,15 @@ class CurrencyControllerDoc
      *     summary="Currency Deactivate",
      *
      *      @OA\Parameter(
-     *         name="id",
+     *         name="key",
      *         in="path",
-     *         description="currency id",
+     *         description="currency key",
      *         required=true,
      *         example="1",
-     *         @OA\Schema(type="integer")
+     *         @OA\Schema(type="string")
      *     ),
      *
+     *      security={{"bearerAuth":{}}},
      *      @OA\Response(response=200, description="Successful operation"),
      *      @OA\Response(response=201, description="Successful operation"),
      *      @OA\Response(response=202, description="Successful operation"),
@@ -112,7 +122,5 @@ class CurrencyControllerDoc
      *      @OA\Response(response=404, description="Resource Not Found")
      * )
      */
-    public function deactivate()
-    {
-    }
+    public function deactivate(Currency $currency);
 }

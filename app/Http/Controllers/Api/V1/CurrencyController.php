@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Contracts\Interfaces\Controllers\Api\V1\CurrencyControllerInterface;
 use App\Exceptions\BadRequestException;
 use App\Facades\Response;
 use App\Http\Controllers\Controller;
@@ -9,7 +10,7 @@ use App\Http\Requests\Api\V1\CurrencyStoreRequest;
 use App\Http\Resources\CurrencyCollection;
 use App\Models\Currency;
 
-class CurrencyController extends Controller
+class CurrencyController extends Controller implements CurrencyControllerInterface
 {
     public function index()
     {
