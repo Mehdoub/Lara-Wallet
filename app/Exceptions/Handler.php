@@ -3,6 +3,8 @@
 namespace App\Exceptions;
 
 use App\Facades\Response;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 
@@ -39,6 +41,13 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $e)
     {
+        if ($e instanceof ModelNotFoundException) {
+            throw new NotFoundException();
+        }
+        if ($e instanceof AuthenticationException) {
+            throw new AuthFailedException();
+        }
+
         if (in_array(get_class($e), $this->customExceptions)) {
             return $e->render();
         } else {
