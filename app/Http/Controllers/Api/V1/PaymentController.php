@@ -24,7 +24,7 @@ class PaymentController extends Controller
      */
     public function index()
     {
-        $payments = Payment::query()->paginate(2);
+        $payments = Payment::query()->paginate(config('settings.pagination'));
 
         return Response::message(__('payment.messages.payment_list_found_successfully'))
             ->data(new PaymentCollection($payments))
