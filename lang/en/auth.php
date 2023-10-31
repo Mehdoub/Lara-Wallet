@@ -25,7 +25,8 @@ return [
         'failed' => 'These credentials do not match our records.',
         'password' => 'The provided password is incorrect.',
         'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
-        'unauthorized' => 'You Are Not Authorized'
+        'unauthorized' => 'You Are Not Authorized',
+        'token_not_sent' => 'Auth Token Not Sent',
+        'token_blocked' => 'Token Has Been Blocked',
     ],
-
 ];

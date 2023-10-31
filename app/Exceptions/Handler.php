@@ -7,6 +7,7 @@ use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
+use Tymon\JWTAuth\Exceptions\TokenBlacklistedException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -30,9 +31,22 @@ class Handler extends ExceptionHandler
     ];
 
     private $customErrors = [
-        ModelNotFoundException::class => NotFoundException::class,
-        AuthenticationException::class => UnauthorizedException::class,
-        RouteNotFoundException::class => UnauthorizedException::class,
+        ModelNotFoundException::class => [
+            'exception' => NotFoundException::class,
+            'message' => ''
+        ],
+        AuthenticationException::class => [
+            'exception' => UnauthorizedException::class,
+            'message' => ''
+        ],
+        RouteNotFoundException::class => [
+            'exception' => UnauthorizedException::class,
+            'message' => 'auth.errors.token_not_sent'
+        ],
+        TokenBlacklistedException::class => [
+            'exception' => UnauthorizedException::class,
+            'message' => 'auth.errors.token_blocked'
+        ]
     ];
 
     /**
@@ -51,7 +65,8 @@ class Handler extends ExceptionHandler
     {
         $exceptionClass = get_class($e);
         if (in_array($exceptionClass, array_keys($this->customErrors))) {
-            throw new $this->customErrors[$exceptionClass]();
+            throw new $this
+                ->customErrors[$exceptionClass]['exception'](__($this->customErrors[$exceptionClass]['message']));
         }
 
         if (in_array($exceptionClass, $this->customExceptions)) {
