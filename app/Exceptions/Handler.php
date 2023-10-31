@@ -6,6 +6,7 @@ use App\Facades\Response;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -28,6 +29,12 @@ class Handler extends ExceptionHandler
         UnauthorizedException::class,
     ];
 
+    private $customErrors = [
+        ModelNotFoundException::class => NotFoundException::class,
+        AuthenticationException::class => UnauthorizedException::class,
+        RouteNotFoundException::class => UnauthorizedException::class,
+    ];
+
     /**
      * Register the exception handling callbacks for the application.
      */
@@ -42,14 +49,12 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $e)
     {
-        if ($e instanceof ModelNotFoundException) {
-            throw new NotFoundException();
-        }
-        if ($e instanceof AuthenticationException) {
-            throw new UnauthorizedException();
+        $exceptionClass = get_class($e);
+        if (in_array($exceptionClass, array_keys($this->customErrors))) {
+            throw new $this->customErrors[$exceptionClass]();
         }
 
-        if (in_array(get_class($e), $this->customExceptions)) {
+        if (in_array($exceptionClass, $this->customExceptions)) {
             return $e->render();
         } else {
             $statusCode = method_exists($e, 'getStatusCode') ? $e->getStatusCode() : 500;

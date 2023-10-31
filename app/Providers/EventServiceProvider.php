@@ -2,9 +2,12 @@
 
 namespace App\Providers;
 
+use App\Events\CurrencyActivated;
+use App\Events\CurrencyDeactivated;
 use App\Events\PaymentRejected;
 use App\Events\PaymentVerified;
 use App\Events\TransactionUpdated;
+use App\Listeners\ActivityLogListener;
 use App\Listeners\SendPaymentRejectedEmailListener;
 use App\Listeners\SendPaymentVerifiedEmailListener;
 use App\Listeners\UpdateUserBalanceListener;
@@ -25,14 +28,22 @@ class EventServiceProvider extends ServiceProvider
             SendEmailVerificationNotification::class,
         ],
         PaymentRejected::class => [
-            SendPaymentRejectedEmailListener::class
+            SendPaymentRejectedEmailListener::class,
+            ActivityLogListener::class,
         ],
         PaymentVerified::class => [
-            SendPaymentVerifiedEmailListener::class
+            SendPaymentVerifiedEmailListener::class,
+            ActivityLogListener::class,
         ],
         TransactionUpdated::class => [
             UpdateUserBalanceListener::class,
-        ]
+        ],
+        CurrencyActivated::class => [
+            ActivityLogListener::class,
+        ],
+        CurrencyDeactivated::class => [
+            ActivityLogListener::class,
+        ],
     ];
 
     /**

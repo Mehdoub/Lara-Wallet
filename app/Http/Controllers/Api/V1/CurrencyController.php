@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Contracts\Interfaces\Controllers\Api\V1\CurrencyControllerInterface;
+use App\Events\CurrencyActivated;
+use App\Events\CurrencyDeactivated;
 use App\Exceptions\BadRequestException;
 use App\Facades\Response;
 use App\Http\Controllers\Controller;
@@ -42,6 +44,7 @@ class CurrencyController extends Controller implements CurrencyControllerInterfa
         }
 
         $currency->update(['is_active' => true]);
+        CurrencyActivated::dispatch($currency);
 
         return Response::message(__('currency.messages.successfully_activated'))->send();
     }
@@ -53,6 +56,7 @@ class CurrencyController extends Controller implements CurrencyControllerInterfa
         }
 
         $currency->update(['is_active' => false]);
+        CurrencyDeactivated::dispatch($currency);
 
         return Response::message(__('currency.messages.successfully_deactivated'))->send();
     }

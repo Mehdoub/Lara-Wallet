@@ -21,7 +21,7 @@ Route::group([
     'middleware' => ['api', 'throttle:' . config('settings.system.api_request_limit_rate')],
     'prefix' => 'v1'
 ], function () {
-    Route::group(['middleware' => 'auth'], function () {
+    Route::group(['middleware' => 'auth:api'], function () {
         Route::get('payments', [PaymentController::class, 'index']);
         Route::get('payments/{payment}', [PaymentController::class, 'show']);
         Route::post('payments', [PaymentController::class, 'store']);
