@@ -12,7 +12,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->command('payment:delete-deprecated')->everyMinute();
+        $schedule->command('currency:fetch-navasan-rates')->everyMinute();
     }
 
     /**

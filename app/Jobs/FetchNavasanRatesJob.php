@@ -31,7 +31,7 @@ class FetchNavasanRatesJob implements ShouldQueue
     public function handle(): void
     {
         $currencyKeyToIsoCodes = Currency::whereNotIn('iso_code', ['irr'])->pluck('iso_code', 'key')->toArray();
-        if (!$currencyKeyToIsoCodes) {
+        if (empty($currencyKeyToIsoCodes)) {
             throw new NotFoundException(__('currency.errors.iso_code_is_empty'));
         }
 
