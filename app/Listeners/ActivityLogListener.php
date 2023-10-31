@@ -14,19 +14,19 @@ class ActivityLogListener
     public $eventsLogs = [
         PaymentVerified::class => [
             'entity' => 'payment',
-            'log_message' => 'PaymentVerified'
+            'log_message' => 'Payment Verified'
         ],
         PaymentRejected::class => [
             'entity' => 'payment',
-            'log_message' => 'PaymentRejected'
+            'log_message' => 'Payment Rejected'
         ],
         CurrencyActivated::class => [
             'entity' => 'currency',
-            'log_message' => 'CurrencyActivated'
+            'log_message' => 'Currency Activated'
         ],
         CurrencyDeactivated::class => [
             'entity' => 'currency',
-            'log_message' => 'CurrencyDeactivated'
+            'log_message' => 'Currency Deactivated'
         ],
     ];
 
@@ -48,6 +48,7 @@ class ActivityLogListener
             activity()
                 ->on($event->{$this->eventsLogs[$eventClass]['entity']})
                 ->by(auth()->user())
+                ->event($eventClass)
                 ->log($this->eventsLogs[$eventClass]['log_message']);
         }
     }
