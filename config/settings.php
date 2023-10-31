@@ -8,5 +8,7 @@ return [
     ],
     'global' => [
         'pagination' => 10,
+        'navasan_api_key' => env('NAVASAN_API_KEY'),
+        'navasan_base_url' => 'https://api.navasan.tech/latest/',
     ],
 ];

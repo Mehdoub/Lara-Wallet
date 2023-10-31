@@ -18,25 +18,25 @@ class CurrenciesSeeder extends Seeder
                 'name' => 'Dollar',
                 'key' => 'dollar',
                 'symbol' => '$',
-                'iso_code' => 'USD'
+                'iso_code' => 'usd'
             ],
             [
                 'name' => 'Yuan',
                 'key' => 'yuan',
                 'symbol' => '¥',
-                'iso_code' => 'CNY'
+                'iso_code' => 'cny'
             ],
             [
                 'name' => 'Rial',
                 'key' => 'rial',
                 'symbol' => '﷼',
-                'iso_code' => 'IRR'
+                'iso_code' => 'irr'
             ],
             [
                 'name' => 'Pound',
                 'key' => 'pound',
                 'symbol' => '£',
-                'iso_code' => 'GBP'
+                'iso_code' => 'gbp'
             ],
         ];
 
