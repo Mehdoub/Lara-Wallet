@@ -21,16 +21,12 @@ class CurrencyStoreRequest extends FormRequest
      */
     public function rules(): array
     {
-        $validations = [];
-
-        switch($this->method()) {
-            case 'POST':
-                $validations['name'] = ['required', 'string', 'max:30'];
-                $validations['symbol'] = ['required', 'string', 'max:10'];
-                $validations['iso_code'] = ['required', 'string', 'max:10'];
-                $validations['key'] = ['required', 'string', 'max:30', 'unique:currencies'];
-                break;
-        }
+        $validations = [
+            'name' => 'required', 'string', 'max:30',
+            'symbol' => 'required', 'string', 'max:10',
+            'iso_code' => 'required', 'string', 'max:10',
+            'key' => 'required', 'string', 'max:30', 'unique:currencies',
+        ];
 
         return $validations;
     }

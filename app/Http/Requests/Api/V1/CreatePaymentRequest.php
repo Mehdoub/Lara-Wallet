@@ -23,14 +23,10 @@ class CreatePaymentRequest extends FormRequest
      */
     public function rules(): array
     {
-        $validations = [];
-
-        switch($this->method()) {
-            case 'POST':
-                $validations['amount'] = ['required', 'numeric', 'min:0', 'not_in:0'];
-                $validations['currency_key'] = ['required', 'string', new CheckCurrencyIsActiveRule];
-                break;
-        }
+        $validations = [
+            'amount'=>'required', 'numeric', 'min:0', 'not_in:0',
+            'currency_key'=>'required', 'string', new CheckCurrencyIsActiveRule,
+        ];
 
         return $validations;
     }

@@ -54,11 +54,11 @@ class PaymentController extends Controller implements PaymentControllerInterface
             'user_id' => auth()->user()->id,
             'amount' => $request->amount,
             'currency_key' => $request->currency_key,
-            'type' => $request->type
         ]);
 
         return Response::message(__('payment.messages.payment_successfully_created'))
             ->data(new PaymentResource($newPayment))
+            ->status(201)
             ->send();
     }
 
@@ -74,15 +74,13 @@ class PaymentController extends Controller implements PaymentControllerInterface
             throw new BadRequestException(__('payment.errors.you_can_only_decline_pending_payments'));
         }
 
-        if ($payment->status == PaymentStatus::PENDING) {
-            $payment->update([
-                'status' => PaymentStatus::REJECTED,
-                'status_updated_at' => Carbon::now(),
-                'status_updated_by' => auth()->user()->id,
-            ]);
+        $payment->update([
+            'status' => PaymentStatus::REJECTED,
+            'status_updated_at' => Carbon::now(),
+            'status_updated_by' => auth()->user()->id,
+        ]);
 
-            PaymentRejected::dispatch($payment);
-        }
+        PaymentRejected::dispatch($payment);
 
         return Response::message(__('payment.messages.the_payment_was_successfully_rejected'))
             ->data(new PaymentResource($payment))

@@ -2,6 +2,7 @@
 
 namespace App\Contracts\Interfaces\Controllers\Api\V1;
 
+use App\Http\Requests\Api\V1\LoginRequest;
 use App\Http\Requests\Api\V1\RegisterRequest;
 
 interface AuthControllerInterface
@@ -37,7 +38,7 @@ interface AuthControllerInterface
      *      @OA\Response(response=404, description="Resource Not Found")
      * )
      */
-    public function login();
+    public function login(LoginRequest $request);
 
     /**
      * @OA\Post(

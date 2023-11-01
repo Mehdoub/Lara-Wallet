@@ -6,6 +6,7 @@ use App\Contracts\Interfaces\Controllers\Api\V1\AuthControllerInterface;
 use App\Exceptions\UnauthorizedException;
 use App\Facades\Response;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\V1\LoginRequest;
 use App\Http\Requests\Api\V1\RegisterRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -17,7 +18,7 @@ class AuthController extends Controller implements AuthControllerInterface
         $this->middleware('auth:api', ['except' => ['login' , 'register', 'refresh']]);
     }
 
-    public function login()
+    public function login(LoginRequest $request)
     {
         $credentials = request(['email', 'password']);
         $token = auth()->attempt($credentials);
@@ -35,7 +36,7 @@ class AuthController extends Controller implements AuthControllerInterface
             'password' => Hash::make($request->password)
         ]);
 
-        return Response::message(__('auth.messages.registered'))->send();
+        return Response::message(__('auth.messages.registered'))->status(201)->send();
     }
 
     public function refresh()

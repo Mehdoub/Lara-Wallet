@@ -6,6 +6,7 @@ use App\Facades\Response;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Tymon\JWTAuth\Exceptions\TokenBlacklistedException;
 use Throwable;
@@ -46,6 +47,10 @@ class Handler extends ExceptionHandler
         TokenBlacklistedException::class => [
             'exception' => UnauthorizedException::class,
             'message' => 'auth.errors.token_blocked'
+        ],
+        ValidationException::class => [
+            'exception' => BadRequestException::class,
+            'message' => 'errors.validation_exception'
         ]
     ];
 
@@ -65,8 +70,9 @@ class Handler extends ExceptionHandler
     {
         $exceptionClass = get_class($e);
         if (in_array($exceptionClass, array_keys($this->customErrors))) {
+            $errors = method_exists($e, 'errors') ? $e->errors() : [];
             throw new $this
-                ->customErrors[$exceptionClass]['exception'](__($this->customErrors[$exceptionClass]['message']));
+                ->customErrors[$exceptionClass]['exception'](__($this->customErrors[$exceptionClass]['message']), $errors);
         }
 
         if (in_array($exceptionClass, $this->customExceptions)) {

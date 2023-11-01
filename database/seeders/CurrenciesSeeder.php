@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Currency;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class CurrenciesSeeder extends Seeder
 {
@@ -40,6 +39,8 @@ class CurrenciesSeeder extends Seeder
             ],
         ];
 
-        DB::table('currencies')->insert($currencies);
+        foreach($currencies as $currency) {
+            Currency::create($currency);
+        }
     }
 }
