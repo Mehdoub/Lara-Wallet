@@ -60,7 +60,8 @@ class Handler extends ExceptionHandler
     public function register()
     {
         $this->reportable(function (Throwable $e) {
-            if (app()->bound('sentry')) {
+            $statusCode = $this::getErrorStatusCode($e);
+            if (app()->bound('sentry') and $statusCode == 500) {
                 app('sentry')->captureException($e);
             }
         });
@@ -78,8 +79,13 @@ class Handler extends ExceptionHandler
         if (in_array($exceptionClass, $this->customExceptions)) {
             return $e->render();
         } else {
-            $statusCode = method_exists($e, 'getStatusCode') ? $e->getStatusCode() : 500;
+            $statusCode = $this::getErrorStatusCode($e);
             return Response::message($e->getMessage())->status($statusCode)->send();
         }
+    }
+
+    public static function getErrorStatusCode(Throwable $error) : int
+    {
+        return method_exists($error, 'getStatusCode') ? $error->getStatusCode() : 500;
     }
 }
